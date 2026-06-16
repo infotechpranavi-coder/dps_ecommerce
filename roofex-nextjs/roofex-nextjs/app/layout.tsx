@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Roofex – Your Trusted Local Residential Roofing Experts',
-  description: 'Professional residential roofing services. Book a free appointment today.',
+  title: 'Roofex - Premium Lifestyle Ecommerce Store',
+  description: 'Shop curated premium lifestyle, home, gifting, and everyday essentials from Roofex.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

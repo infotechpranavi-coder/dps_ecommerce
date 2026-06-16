@@ -1,0 +1,96 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 3.3s
+ ○ Compiling / ...
+ ✓ Compiled / in 8.3s (1173 modules)
+ GET / 200 in 8689ms
+ GET / 200 in 124ms
+ ✓ Compiled in 2.2s (1159 modules)
+ GET / 200 in 86ms
+ GET / 200 in 82ms
+ GET / 200 in 85ms
+ GET / 200 in 34ms
+ GET / 200 in 83ms
+ GET / 200 in 83ms
+ GET / 200 in 647ms
+ ✓ Compiled in 1187ms (1159 modules)
+ ✓ Compiled in 742ms (1159 modules)
+ ✓ Compiled in 845ms (1159 modules)
+ ✓ Compiled in 1418ms (1173 modules)
+ ✓ Compiled in 1638ms (1159 modules)
+ ✓ Compiled in 712ms (1173 modules)
+ GET / 200 in 491ms
+ GET / 200 in 192ms
+ GET / 200 in 251ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1933ms (1162 modules)
+ GET /_next/static/css/app/layout.css?v=1781597185511 404 in 1920ms
+ GET /_next/static/css/app/layout.css?v=1781597185319 404 in 2323ms
+ GET /_next/static/chunks/webpack.js?v=1781597185319 404 in 2707ms
+ GET /_next/static/chunks/main-app.js?v=1781597185319 404 in 2676ms
+ GET /_next/static/chunks/webpack.js?v=1781597185511 404 in 2370ms
+ GET /_next/static/chunks/main-app.js?v=1781597185511 404 in 2369ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 317ms
+ GET /_next/static/chunks/app/page.js 404 in 176ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 84ms
+ GET /_next/static/chunks/app/page.js 404 in 58ms
+ GET / 200 in 50ms
+ GET / 200 in 113ms
+ GET /_next/static/css/app/layout.css?v=1781597300270 404 in 67ms
+ GET /_next/static/chunks/main-app.js?v=1781597300270 404 in 197ms
+ GET /_next/static/chunks/app/page.js 404 in 189ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 188ms
+ GET / 200 in 44ms
+ GET / 200 in 142ms
+ GET /_next/static/css/app/layout.css?v=1781597300990 404 in 188ms
+ GET /_next/static/chunks/main-app.js?v=1781597300990 404 in 254ms
+ GET /_next/static/chunks/app/page.js 404 in 254ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 265ms
+ GET / 200 in 220ms
+ GET /_next/static/css/app/layout.css?v=1781597301440 404 in 128ms
+ GET /_next/static/chunks/main-app.js?v=1781597301440 404 in 139ms
+ GET /_next/static/chunks/app/page.js 404 in 148ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 149ms
+ GET / 200 in 232ms
+ GET /_next/static/css/app/layout.css?v=1781597301759 404 in 85ms
+ GET /_next/static/chunks/main-app.js?v=1781597301759 404 in 110ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 119ms
+ GET /_next/static/chunks/app/page.js 404 in 119ms
+ ✓ Compiled in 1327ms (1162 modules)
+ ✓ Compiled in 1421ms (1159 modules)
+ ✓ Compiled in 744ms (1159 modules)
+ ✓ Compiled in 767ms (1159 modules)
+ ✓ Compiled in 611ms (1159 modules)
+ ✓ Compiled in 878ms (1173 modules)
+ GET / 200 in 275ms
+ GET / 200 in 106ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 932ms (1162 modules)
+ GET /_next/static/css/app/layout.css?v=1781597525218 404 in 1421ms
+ GET /_next/static/chunks/webpack.js?v=1781597525218 404 in 1513ms
+ GET /_next/static/chunks/main-app.js?v=1781597525218 404 in 1502ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 1503ms
+ GET /_next/static/chunks/app/page.js 404 in 1500ms
+ GET / 200 in 959ms
+ GET /_next/static/css/app/layout.css?v=1781597526790 404 in 139ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 147ms
+ GET /_next/static/chunks/main-app.js?v=1781597526790 404 in 150ms
+ GET /_next/static/chunks/app/page.js 404 in 148ms
+ GET /_next/static/css/app/layout.css?v=1781597526935 404 in 36ms
+ GET / 200 in 23ms
+ GET / 200 in 63ms
+ GET /_next/static/css/app/layout.css?v=1781597530001 404 in 83ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 99ms
+ GET /_next/static/chunks/main-app.js?v=1781597530001 404 in 104ms
+ GET /_next/static/chunks/app/page.js 404 in 94ms
+ GET / 200 in 66ms
+ GET /_next/static/css/app/layout.css?v=1781597530329 404 in 41ms
+ GET /_next/static/chunks/main-app.js?v=1781597530329 404 in 62ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 62ms
+ GET /_next/static/chunks/app/page.js 404 in 57ms
+ GET / 200 in 81ms
+ GET / 200 in 64ms
+ GET /_next/static/css/app/layout.css?v=1781597582517 404 in 46ms
+[?25h

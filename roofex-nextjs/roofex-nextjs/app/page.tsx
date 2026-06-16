@@ -1,192 +1,56 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useRef, useState } from 'react'
+import { FloatingNavbar } from '@/components/FloatingNavbar'
+import { Footer } from '@/components/Footer'
+import { Reveal } from '@/components/Reveal'
+import { ProductCard } from '@/components/ProductCard'
+import { bestSellers, categories, newArrivals } from '@/lib/products'
+import {
+  AwardIcon,
+  CheckIcon,
+  MailIcon,
+  ShieldIcon,
+  UsersIcon,
+  WrenchIcon,
+} from '@/components/Icons'
 
-/* ── SVG ICONS ── */
-const RoofLogoIcon = () => (
-  <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden>
-    <line x1="5" y1="19" x2="19" y2="7" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
-    <line x1="5" y1="15" x2="19" y2="3" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
-    <line x1="5" y1="23" x2="19" y2="11" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
-  </svg>
-)
-
-const HomeIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden>
-    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" fill="#fff" />
-    <polyline points="9,22 9,12 15,12 15,22" fill="none" stroke="#fff" strokeWidth="2" />
-  </svg>
-)
-
-const PhoneIcon = ({ size = 16, color = 'currentColor' }: { size?: number; color?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" width={size} height={size} aria-hidden>
-    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91A16 16 0 0016.09 17.9l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
-  </svg>
-)
-
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width={16} height={16} aria-hidden>
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
-)
-
-const MapPinIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={14} height={14} aria-hidden>
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-    <circle cx="12" cy="10" r="3" />
-  </svg>
-)
-
-const ShieldIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={22} height={22} aria-hidden>
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-  </svg>
-)
-
-const AwardIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={22} height={22} aria-hidden>
-    <circle cx="12" cy="8" r="6" />
-    <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
-  </svg>
-)
-
-const WrenchIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={22} height={22} aria-hidden>
-    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
-  </svg>
-)
-
-const UsersIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={22} height={22} aria-hidden>
-    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-  </svg>
-)
-
-const MenuIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={24} height={24} aria-hidden>
-    <line x1="3" y1="6" x2="21" y2="6" />
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="3" y1="18" x2="21" y2="18" />
-  </svg>
-)
-
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={24} height={24} aria-hidden>
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-)
-
-const MailIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16} aria-hidden>
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-    <polyline points="22,6 12,13 2,6" />
-  </svg>
-)
-
-/* ── FLOATING NAVBAR ── */
-function FloatingNavbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
-
-  const closeMenu = () => setMenuOpen(false)
-
-  return (
-    <header className={`floatingNav${scrolled ? ' is-scrolled' : ''}${menuOpen ? ' is-open' : ''}`}>
-      <div className="container floatingNavWrap">
-        <div className="floatingNavBar">
-          <a href="#" className="floatingLogo" onClick={closeMenu}>
-            <div className="floatingLogoIcon"><RoofLogoIcon /></div>
-            Roofex
-          </a>
-
-          <nav className="floatingNavLinks" aria-label="Main navigation">
-            <span className="floatingNavDropdown">Pages <span>▾</span></span>
-            <a href="#" className="active">Home</a>
-            <a href="#about" onClick={closeMenu}>Company</a>
-            <a href="#booking" onClick={closeMenu}>Contact</a>
-          </nav>
-
-          <div className="floatingNavEnd">
-            <a href="tel:+10001234567" className="floatingNavCta">
-              <PhoneIcon size={16} color="#fff" />
-              Get A Free Call Now
-            </a>
-            <button
-              type="button"
-              className="floatingMenuToggle"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={menuOpen}
-            >
-              {menuOpen ? <CloseIcon /> : <MenuIcon />}
-            </button>
-          </div>
-        </div>
-
-        <nav className={`floatingMobileNav${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
-          <span className="floatingNavDropdown">Pages <span>▾</span></span>
-          <a href="#" onClick={closeMenu}>Home</a>
-          <a href="#about" onClick={closeMenu}>Company</a>
-          <a href="#booking" onClick={closeMenu}>Contact</a>
-          <a href="tel:+10001234567" className="floatingNavCta" onClick={closeMenu}>
-            <PhoneIcon size={16} color="#fff" />
-            Get A Free Call Now
-          </a>
-        </nav>
-      </div>
-    </header>
-  )
-}
-
-/* ── HERO ── */
 function Hero() {
   return (
     <section className="hero">
       <div className="heroBg" aria-hidden />
-
-      <div className="heroBody">
-        <h1>Your Trusted Local Residential Roofing Experts</h1>
+      <Reveal className="heroBody">
+        <div className="premiumBadge">Fresh finds, premium feel</div>
+        <h1>Shop Beautiful Pieces That Make Everyday Feel Special</h1>
+        <p className="heroCopy">
+          Discover home, style, and gifting essentials chosen for quality, comfort, and a polished look you can use every day.
+        </p>
         <div className="heroBtns">
-          <a href="#booking" className="btnOrange">Book An Appointment</a>
-          <a href="tel:+10001234567" className="btnOutlineWhite">Get A Free Call Now</a>
+          <Link href="/products" className="btnOrange">Shop Collection</Link>
+          <a href="#new-arrivals" className="btnOutlineWhite">Explore New Arrivals</a>
         </div>
         <div className="heroTrust">
           <div className="trustAvatars">
             {[32, 44, 56].map((n) => (
-              <img key={n} src={`https://randomuser.me/api/portraits/men/${n}.jpg`} alt="" />
+              <img key={n} src={`https://randomuser.me/api/portraits/women/${n}.jpg`} alt="" />
             ))}
           </div>
           <div className="trustText">
-            Trusted by 46,250+
-            <span>Marketers &amp; Complains</span>
+            Loved by 46,250+ shoppers
+            <span>Premium packaging, secure checkout, fast delivery</span>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   )
 }
 
-/* ── TRUST BAR ── */
 const trustItems = [
-  { icon: <ShieldIcon />, title: 'Fully Licensed', desc: 'State-certified contractors' },
-  { icon: <AwardIcon />, title: 'Satisfaction Guaranteed', desc: '100% workmanship warranty' },
-  { icon: <WrenchIcon />, title: 'Expert Craftsmanship', desc: 'Certified roofing specialists' },
-  { icon: <UsersIcon />, title: 'Extended Warranty', desc: 'Long-term protection plans' },
+  { icon: <ShieldIcon />, title: 'Safe Checkout', desc: 'Protected payments' },
+  { icon: <AwardIcon />, title: 'Gift-Ready Pack', desc: 'Looks premium on arrival' },
+  { icon: <WrenchIcon />, title: 'Quick Delivery', desc: 'Tracked to your door' },
+  { icon: <UsersIcon />, title: 'Easy Returns', desc: '30-day support' },
 ]
 
 function TrustBar() {
@@ -194,14 +58,14 @@ function TrustBar() {
     <div className="trustBar">
       <div className="container trustBarInner">
         <div className="googleRating">
-          <div className="googleLogo">G</div>
+          <div className="googleLogo">R</div>
           <div className="ratingInfo">
-            <strong>Google Rating</strong>
+            <strong>Shopper Rating</strong>
             <div className="ratingRow">
               <span className="ratingNum">4.9</span>
-              <span className="stars">★★★★★</span>
+              <span className="stars">5.0 / 5</span>
             </div>
-            <small>Based on 350+ verified reviews</small>
+            <small>Based on 8,400+ verified orders</small>
           </div>
         </div>
         <div className="trustDivider" />
@@ -221,64 +85,62 @@ function TrustBar() {
   )
 }
 
-/* ── ABOUT ── */
 const stats = [
-  { num: '25+', desc: 'Years of Roofing Experience', icon: <AwardIcon /> },
-  { num: '3,500+', desc: 'Roofs Installed & Repaired', icon: <WrenchIcon /> },
-  { num: '2,000+', desc: 'Satisfied Property Owners', icon: <UsersIcon /> },
-  { num: '100%', desc: 'Licensed & Fully Insured', icon: <ShieldIcon /> },
+  { num: '50K+', desc: 'Happy Shoppers', icon: <UsersIcon /> },
+  { num: '120K+', desc: 'Orders Shipped', icon: <WrenchIcon /> },
+  { num: '36+', desc: 'Curated Products', icon: <AwardIcon /> },
+  { num: '98%', desc: 'Love the Quality', icon: <ShieldIcon /> },
 ]
 
 function About() {
   return (
     <section className="aboutSection section--gold" id="about">
       <div className="container">
-        <div className="aboutGrid">
+        <Reveal className="aboutGrid">
           <div className="aboutLeft">
-            <div className="eyebrow">Who We Are</div>
-            <h2 className="sectionTitle">Built to Protect What Matters Most</h2>
+            <div className="eyebrow">Why Roofex</div>
+            <h2 className="sectionTitle">Premium Finds Without the Confusion</h2>
           </div>
           <div className="aboutRight">
             <p>
-              At Roofex, we believe a strong roof means a safer home and greater peace of mind. Our team of skilled roofing professionals is committed to delivering exceptional results on every project — from minor repairs to complete replacements.
+              Roofex brings together products that look refined, feel useful, and arrive beautifully packed. You get simple discovery, clear product choices, and pieces that make your home, travel, and gifting moments feel more special.
             </p>
           </div>
-        </div>
+        </Reveal>
 
         <div className="statsGrid">
           {stats.map((s) => (
-            <div key={s.desc} className="statCard">
+            <Reveal key={s.desc} className="statCard">
               <div className="statIcon">{s.icon}</div>
               <div className="statNum">{s.num}</div>
               <div className="statDesc">{s.desc}</div>
-            </div>
+            </Reveal>
           ))}
         </div>
 
-        <div className="aboutMedia">
+        <Reveal className="aboutMedia">
           <img
-            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&q=80"
-            alt="Professional roofing team at work"
+            src="https://images.unsplash.com/photo-1513161455079-7dc1de15ef3e?w=1100&q=80"
+            alt="Premium lifestyle products arranged in a refined interior"
           />
           <div className="videoBadge">
-            <div className="playBtn">▶</div>
+            <div className="playBtn">View</div>
             <div>
-              <div style={{ fontSize: 11, opacity: 0.8 }}>Watch our process</div>
-              <div style={{ fontSize: 13, fontWeight: 700 }}>1 min 22 sec</div>
+              <div style={{ fontSize: 11, opacity: 0.8 }}>Now trending</div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>New season favorites</div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   )
 }
 
-/* ── TESTIMONIALS ── */
 const testimonials = [
-  { text: 'We replaced our old roof in just two days — the results were amazing. The team was professional, friendly, and explained everything clearly.', name: 'John Carter', role: 'Homeowner', avatar: 'https://randomuser.me/api/portraits/men/41.jpg' },
-  { text: 'After storm damage, Roofex handled the inspection, repairs, and even helped with the insurance process. Completely stress-free.', name: 'Sarah Williams', role: 'Homeowner', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
-  { text: 'We got several quotes, but Roofex stood out with their transparency and knowledge. The new roof looks fantastic.', name: 'James Billah', role: 'Property Owner', avatar: 'https://randomuser.me/api/portraits/men/52.jpg' },
-  { text: 'From the first call to project completion, communication was excellent. The crew showed up on time and delivered exactly what was promised.', name: 'Emily Thompson', role: 'Homeowner', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' },
+  { text: 'The Noir Home Set looked beautiful straight out of the box. Simple, elegant, and worth it.', name: 'Maya Chen', role: 'Verified Buyer - Noir Home Set', avatar: 'https://randomuser.me/api/portraits/women/41.jpg' },
+  { text: 'The carryall feels premium and the delivery updates were clear from checkout to arrival.', name: 'Sarah Williams', role: 'Verified Buyer - Atelier Carryall', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+  { text: 'Everything feels carefully selected. I ordered once for myself, then came back for gifts.', name: 'James Billah', role: 'Verified Buyer - Gift Edit', avatar: 'https://randomuser.me/api/portraits/men/52.jpg' },
+  { text: 'Fast shipping, clean packaging, and product pages that make choosing easy.', name: 'Emily Thompson', role: 'Verified Buyer - Linen Ritual Kit', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' },
 ]
 
 function Testimonials() {
@@ -296,14 +158,14 @@ function Testimonials() {
   return (
     <section className="testimonialsSection" id="reviews">
       <div className="container">
-        <div className="testimonialsHeader">
+        <Reveal className="testimonialsHeader">
           <div className="sectionHeader sectionHeader--left">
-            <div className="eyebrow">Testimonials</div>
-            <h2 className="sectionTitle">What Our Clients Say</h2>
-            <p className="sectionDesc">Real feedback from homeowners who trusted Roofex with their most important investment.</p>
+            <div className="eyebrow">Buyer Favorites</div>
+            <h2 className="sectionTitle">People Notice the Details</h2>
+            <p className="sectionDesc">Short, real reactions from shoppers who loved the look, feel, and delivery experience.</p>
           </div>
-          <span className="testimonialsHint">← Drag to explore →</span>
-        </div>
+          <span className="testimonialsHint">Drag to explore</span>
+        </Reveal>
       </div>
       <div
         className="testimonialsInner"
@@ -320,8 +182,9 @@ function Testimonials() {
         style={{ paddingLeft: 'max(24px, calc((100vw - 1200px) / 2 + 24px))' }}
       >
         {testimonials.map((t) => (
-          <div key={t.name} className="testiCard">
-            <div className="testiStars">★★★★★</div>
+          <article key={t.name} className="testiCard">
+            <div className="verifiedBadge">Verified Buyer</div>
+            <div className="testiStars">5.0 rating</div>
             <p>&ldquo;{t.text}&rdquo;</p>
             <div className="testiAuthor">
               <img src={t.avatar} alt={t.name} />
@@ -330,35 +193,32 @@ function Testimonials() {
                 <div className="testiRole">{t.role}</div>
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>
   )
 }
 
-/* ── SERVICES ── */
-const services = [
-  { title: 'Roof Installation', desc: 'Expert installation using premium materials for lasting protection and curb appeal.', img: 'https://images.unsplash.com/photo-1591588582259-e675bd2e6088?w=600&q=80' },
-  { title: 'Roof Replacement', desc: 'Complete tear-off and replacement with durable, high-performance roofing systems.', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80' },
-  { title: 'Roof Inspection', desc: 'Thorough assessments to identify damage, leaks, and potential problem areas early.', img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80' },
-  { title: 'Emergency Services', desc: 'Rapid response for storm damage, sudden leaks, and urgent structural issues.', img: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=600&q=80' },
-  { title: 'Metal Roofing', desc: 'Energy-efficient metal options offering superior durability and a modern aesthetic.', img: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=600&q=80' },
-  { title: 'Gutter & Drainage', desc: 'Installation and repair of gutter systems to protect your roof from water damage.', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80' },
-]
+const collections = categories.map((cat) => ({
+  title: cat.title,
+  desc: cat.description,
+  img: cat.img,
+  count: cat.count,
+}))
 
-function Services() {
+function Collections() {
   return (
-    <section className="section" id="services">
+    <section className="section" id="collections">
       <div className="container">
-        <div className="sectionHeader">
-          <div className="eyebrow">Our Services</div>
-          <h2 className="sectionTitle">Smart Solutions for Stronger Roofs</h2>
-          <p className="sectionDesc">Comprehensive roofing services tailored to protect your home and maximize its value.</p>
-        </div>
+        <Reveal className="sectionHeader">
+          <div className="eyebrow">Shop The Edit</div>
+          <h2 className="sectionTitle">Find the Right Piece Faster</h2>
+          <p className="sectionDesc">Browse clear collections built around what customers actually want: style, comfort, gifting, and everyday usefulness.</p>
+        </Reveal>
         <div className="servicesGrid">
-          {services.map((s, i) => (
-            <article key={s.title} className="serviceCard">
+          {collections.map((s, i) => (
+            <Reveal key={s.title} className="serviceCard collectionCard">
               <div className="serviceImgWrap">
                 <img src={s.img} alt={s.title} />
                 <span className="serviceNum">{String(i + 1).padStart(2, '0')}</span>
@@ -366,9 +226,10 @@ function Services() {
               <div className="serviceBody">
                 <h3>{s.title}</h3>
                 <p>{s.desc}</p>
-                <a href="#booking" className="learnMore">Learn More →</a>
+                <span className="collectionCount">{s.count}</span>
+                <Link href="/products" className="learnMore">Shop the edit</Link>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -376,11 +237,45 @@ function Services() {
   )
 }
 
-/* ── QUALITY + PROCESS ── */
+function BestSellers() {
+  const [wishlisted, setWishlisted] = useState<string[]>([])
+
+  const toggleWishlist = (title: string) => {
+    setWishlisted((items) => items.includes(title) ? items.filter((item) => item !== title) : [...items, title])
+  }
+
+  return (
+    <section className="section section--surface" id="bestsellers">
+      <div className="container">
+        <Reveal className="sectionHeader">
+          <div className="eyebrow">Best Sellers</div>
+          <h2 className="sectionTitle">Most Loved Right Now</h2>
+          <p className="sectionDesc">Top-rated picks with verified reviews, detailed product pages, and secure checkout.</p>
+        </Reveal>
+        <div className="productGrid">
+          {bestSellers.map((product) => (
+            <Reveal key={product.slug}>
+              <ProductCard
+                product={product}
+                wishlisted={wishlisted.includes(product.title)}
+                onToggleWishlist={() => toggleWishlist(product.title)}
+                showCategory
+              />
+            </Reveal>
+          ))}
+        </div>
+        <Reveal className="sectionCtaRow">
+          <Link href="/products" className="btn btnDark">View All Products</Link>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 const features = [
-  { icon: <WrenchIcon />, title: 'High-Quality Materials', desc: 'We use trusted, weather-resistant materials designed for durability and long-term performance.' },
-  { icon: <AwardIcon />, title: 'Honest & Transparent Pricing', desc: 'No hidden fees. Clear estimates and straightforward communication from start to finish.' },
-  { icon: <ShieldIcon />, title: 'Fast & Reliable Service', desc: 'Efficient project completion while maintaining the highest quality and safety standards.' },
+  { icon: <AwardIcon />, title: 'Feels Premium', desc: 'We choose products with strong materials, neat finishing, and real everyday use.' },
+  { icon: <WrenchIcon />, title: 'Easy To Choose', desc: 'No endless browsing. Each edit is organized so customers can decide quickly.' },
+  { icon: <ShieldIcon />, title: 'Safe To Buy', desc: 'Secure checkout, clear delivery details, and simple support after purchase.' },
 ]
 
 function QualityAndProcess() {
@@ -388,17 +283,17 @@ function QualityAndProcess() {
     <section className="section section--surface">
       <div className="container">
         <div className="qualityInner">
-          <div className="qualityLeft">
-            <div className="eyebrow">What We Do Best</div>
-            <h2 className="sectionTitle">Quality Roofing from Start to Finish</h2>
+          <Reveal className="qualityLeft">
+            <div className="eyebrow">Why Shop Here</div>
+            <h2 className="sectionTitle">Premium Shopping Made Simple</h2>
             <div className="qualityImg">
-              <img src="https://images.unsplash.com/photo-1591588582259-e675bd2e6088?w=700&q=80" alt="Quality roofing work" />
+              <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=900&q=80" alt="Premium products in a refined interior" />
             </div>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal>
             <div className="featureHighlight">
-              <h4>Experienced Roofing Professionals</h4>
-              <p>Our skilled team brings decades of hands-on experience to every project, ensuring precision, safety, and results that last.</p>
+              <h4>Clear choices. Beautiful products. Smooth delivery.</h4>
+              <p>Roofex makes premium shopping easy with curated edits, useful product details, secure checkout, and packaging that feels special when it arrives.</p>
             </div>
             {features.map((f) => (
               <div key={f.title} className="featureItem">
@@ -409,122 +304,25 @@ function QualityAndProcess() {
                 </div>
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
 
-        <div className="sectionHeader">
-          <div className="eyebrow">Our Process</div>
-          <h2 className="sectionTitle">Simple Steps to a Stronger Roof</h2>
-        </div>
-        <div className="processSteps">
-          <div className="processStep">
-            <div className="stepCircle">01</div>
-            <h4>Detailed Assessment</h4>
-            <p>Our experts perform a thorough inspection to identify damage, leaks, and weak spots before any work begins.</p>
-          </div>
-          <div className="processStep">
-            <div className="stepCircle">02</div>
-            <h4>Transparent Estimate</h4>
-            <p>We provide a clear, itemized quote outlining all work needed and costs — no surprises, ever.</p>
-          </div>
-          <div className="processStep">
-            <div className="stepCircle">03</div>
-            <h4>Expert Installation</h4>
-            <p>Our certified crew completes the job efficiently, followed by a final quality check and thorough cleanup.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ── BENEFITS ── */
-function Benefits() {
-  return (
-    <section className="section">
-      <div className="container benefitsInner">
-        <div className="benefitsLeft">
-          <div className="eyebrow">Benefits</div>
-          <h2 className="sectionTitle">Peace of Mind Under Every Roof</h2>
-          <p className="sectionDesc" style={{ textAlign: 'left', margin: '0 0 28px' }}>
-            We deliver more than roofs — we deliver protection, comfort, and long-term value for your home.
-          </p>
-          <div className="benefitItem">
-            <div className="benefitNum">1</div>
-            <div>
-              <h4>Better Energy Efficiency</h4>
-              <p>Modern roofing systems reduce heat transfer, lowering energy bills and keeping your home comfortable year-round.</p>
-            </div>
-          </div>
-          <div className="benefitItem">
-            <div className="benefitNum">2</div>
-            <div>
-              <h4>Long-Term Cost Savings</h4>
-              <p>Quality installation reduces future repair costs, improves efficiency, and adds real value to your property.</p>
-            </div>
-          </div>
-        </div>
-        <div className="benefitsRight">
-          <div className="reviewCardSmall">
-            <div className="miniAvatars">
-              {[22, 33, 55].map((n) => (
-                <img key={n} src={`https://randomuser.me/api/portraits/women/${n}.jpg`} alt="" />
-              ))}
-            </div>
-            <small>Trusted by 2,000+ homeowners</small>
-            <div className="miniStars">★★★★★</div>
-            <strong>5.0 Average Rating</strong>
-          </div>
-          <div className="benefitsImgs">
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80" alt="Roofing team" />
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80" alt="Completed home" />
-            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" alt="Roofing project" />
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ── CLIENT REVIEWS ── */
-const bentoReviews = [
-  { text: 'Roofex repaired my roof quickly and efficiently. The team was professional, friendly, and the results were flawless.', name: 'Sarah Thompson', role: 'Homeowner', avatar: 'https://randomuser.me/api/portraits/women/25.jpg' },
-  { text: 'Their experts handled our commercial building with precision. Roofex exceeded our expectations in every way.', name: 'Michael Johnson', role: 'Business Manager', avatar: 'https://randomuser.me/api/portraits/men/35.jpg' },
-  { text: 'From start to finish, Roofex was incredible. Professional crew, quality materials, and the roof looks amazing.', name: 'Russell Wilson', role: 'Business Owner', avatar: 'https://randomuser.me/api/portraits/men/65.jpg', featured: true },
-  { text: 'From the initial inspection to the final repair, Roofex made the process simple and stress-free.', name: 'Emily Parker', role: 'Homeowner', avatar: 'https://randomuser.me/api/portraits/women/46.jpg' },
-  { text: 'Fast, reliable, and high-quality roofing services. Roofex delivers real peace of mind for any property owner.', name: 'Kevin Brown', role: 'Homeowner', avatar: 'https://randomuser.me/api/portraits/men/54.jpg' },
-  { text: 'I\'ve worked with many roofing companies, but Roofex stands out for their expertise and commitment to excellence.', name: 'David Ramirez', role: 'Business Owner', avatar: 'https://randomuser.me/api/portraits/men/72.jpg' },
-]
-
-function ClientReviews() {
-  return (
-    <section className="section section--gold clientReviews">
-      <div className="container">
-        <div className="sectionHeader">
-          <div className="eyebrow eyebrow--light">Customer Reviews</div>
-          <h2 className="sectionTitle">What Clients Say About Roofex</h2>
-          <p className="sectionDesc">Hear directly from the homeowners and businesses we&apos;ve served.</p>
-        </div>
-        <div className="reviewsBento">
-          {bentoReviews.map((r) => (
-            <div key={r.name} className={`reviewBentoCard${r.featured ? ' featured' : ''}`}>
-              <div>
-                <div className="rbStars">★★★★★</div>
-                <p>&ldquo;{r.text}&rdquo;</p>
-                <div className="rbAuthor">
-                  <img src={r.avatar} alt={r.name} />
-                  <div>
-                    <div className="rbName">{r.name}</div>
-                    <div className="rbRole">{r.role}</div>
-                  </div>
-                </div>
-              </div>
-              {r.featured && (
-                <div className="featuredImg">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="Satisfied customer" />
-                </div>
-              )}
-            </div>
+        <Reveal className="sectionHeader">
+          <div className="eyebrow">How It Works</div>
+          <h2 className="sectionTitle">From Browse to Box in Four Simple Steps</h2>
+        </Reveal>
+        <div className="processSteps processStepsFour">
+          {[
+            ['01', 'Browse', 'Explore curated edits by style, product type, and customer favorites.'],
+            ['02', 'Pick', 'Check images, ratings, price, and stock before adding to cart.'],
+            ['03', 'Pay Safely', 'Complete your order through a secure and focused checkout.'],
+            ['04', 'Unbox', 'Get tracked shipping, premium packaging, and easy return support.'],
+          ].map(([num, title, desc]) => (
+            <Reveal key={title} className="processStep">
+              <div className="stepCircle">{num}</div>
+              <h4>{title}</h4>
+              <p>{desc}</p>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -532,23 +330,283 @@ function ClientReviews() {
   )
 }
 
-/* ── BOOKING ── */
-const bookingPerks = [
-  'Free on-site inspection',
-  'No-obligation estimate',
-  'Response within 24 hours',
+function Benefits() {
+  return (
+    <section className="section">
+      <div className="container benefitsInner">
+        <Reveal className="benefitsLeft">
+          <div className="eyebrow">Service Promise</div>
+          <h2 className="sectionTitle">A Premium Feel After You Click Buy</h2>
+          <p className="sectionDesc" style={{ textAlign: 'left', margin: '0 0 28px' }}>
+            Great shopping does not stop at the product page. Roofex keeps the full experience clear, quick, and reassuring.
+          </p>
+          <div className="benefitItem">
+            <div className="benefitNum">1</div>
+            <div>
+              <h4>Helpful Support</h4>
+              <p>Get guidance for product choice, gifting, delivery, and post-purchase questions.</p>
+            </div>
+          </div>
+          <div className="benefitItem">
+            <div className="benefitNum">2</div>
+            <div>
+              <h4>Simple Returns</h4>
+              <p>Enjoy clear order updates, a 30-day return window, and packaging made to impress.</p>
+            </div>
+          </div>
+        </Reveal>
+        <Reveal className="benefitsRight">
+          <div className="reviewCardSmall">
+            <div className="miniAvatars">
+              {[22, 33, 55].map((n) => (
+                <img key={n} src={`https://randomuser.me/api/portraits/women/${n}.jpg`} alt="" />
+              ))}
+            </div>
+            <small>Trusted by premium shoppers</small>
+            <div className="miniStars">4.9 average rating</div>
+            <strong>8,400+ verified reviews</strong>
+          </div>
+          <div className="benefitsImgs">
+            <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=900&q=80" alt="Premium home lifestyle scene" />
+            <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80" alt="Modern lifestyle collection" />
+            <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&q=80" alt="Premium packaged products" />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+const bentoReviews = [
+  {
+    text: 'Beautiful finish, strong packaging, and the set looks premium in my home.',
+    name: 'Sarah Thompson',
+    role: 'Verified Buyer',
+    product: 'Noir Ceramic Ritual Set',
+    location: 'Mumbai, India',
+    date: 'Purchased 2 weeks ago',
+    avatar: 'https://randomuser.me/api/portraits/women/25.jpg',
+    thumb: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=200&q=80',
+  },
+  {
+    text: 'Elegant, useful, and exactly like the photos. Delivery was smooth too.',
+    name: 'Michael Johnson',
+    role: 'Verified Buyer',
+    product: 'Brushed Gold Tray',
+    location: 'London, UK',
+    date: 'Verified on May 2026',
+    avatar: 'https://randomuser.me/api/portraits/men/35.jpg',
+    thumb: 'https://images.unsplash.com/photo-1602874801006-1f7b6611c7e3?w=200&q=80',
+  },
+  {
+    text: 'Soft leather, neat stitching, and a premium feel from box to bag.',
+    name: 'Russell Wilson',
+    role: 'Verified Buyer',
+    product: 'Premium Leather Travel Bag',
+    location: 'New York, USA',
+    date: 'Purchased 2 weeks ago',
+    avatar: 'https://randomuser.me/api/portraits/men/65.jpg',
+    thumb: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=220&q=80',
+    featured: true,
+  },
+  {
+    text: 'A gift-ready box with products that felt carefully selected.',
+    name: 'Emily Parker',
+    role: 'Verified Buyer',
+    product: 'Luxury Gift Collection',
+    location: 'Dubai, UAE',
+    date: 'Verified on May 2026',
+    avatar: 'https://randomuser.me/api/portraits/women/46.jpg',
+    thumb: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=200&q=80',
+  },
+  {
+    text: 'Soft, warm, and refined. Checkout was simple and fast.',
+    name: 'Kevin Brown',
+    role: 'Verified Buyer',
+    product: 'Linen Lounge Throw',
+    location: 'London, UK',
+    date: 'Purchased 2 weeks ago',
+    avatar: 'https://randomuser.me/api/portraits/men/54.jpg',
+    thumb: 'https://images.unsplash.com/photo-1583845112203-29329902330b?w=200&q=80',
+  },
+  {
+    text: 'Structured, stylish, and easy to carry every day.',
+    name: 'David Ramirez',
+    role: 'Verified Buyer',
+    product: 'Atelier Leather Carryall',
+    location: 'Mumbai, India',
+    date: 'Verified on May 2026',
+    avatar: 'https://randomuser.me/api/portraits/men/72.jpg',
+    thumb: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=200&q=80',
+  },
 ]
 
-function Booking() {
+function ClientReviews() {
+  const proofMetrics = [
+    '★ 4.9/5 Average Rating',
+    '50,000+ Happy Customers',
+    '98% Satisfaction Rate',
+    '120,000+ Orders Delivered',
+  ]
+
+  const displayMetrics = [
+    '4.9/5 rating',
+    '50k+ happy shoppers',
+    '98% satisfaction',
+    'Tracked delivery',
+  ]
+
+  const trustSignals = ['Secure Checkout', 'Fast Delivery', 'Premium Quality', 'Easy Returns']
+
   return (
-    <section className="section section--surface" id="booking">
+    <section className="section section--gold clientReviews">
       <div className="container">
-        <div className="bookingCard">
+        <Reveal className="sectionHeader">
+          <div className="eyebrow eyebrow--light">Customer Love</div>
+          <h2 className="sectionTitle">Real Words From Real Shoppers</h2>
+          <p className="sectionDesc">Quick proof that the products look good, feel good, and arrive the way customers expect.</p>
+        </Reveal>
+        <Reveal className="reviewMetrics">
+          {displayMetrics.map((metric) => (
+            <div key={metric} className="reviewMetric">{metric}</div>
+          ))}
+        </Reveal>
+        <div className="floatingTrustIndicators" aria-hidden>
+          {trustSignals.map((signal) => (
+            <span key={signal}>{signal}</span>
+          ))}
+        </div>
+        <div className="reviewsBento">
+          {bentoReviews.map((r) => (
+            <Reveal key={r.name} className={`reviewBentoCard${r.featured ? ' featured' : ''}`}>
+              <div>
+                <div className="reviewCardTop">
+                  <div className="verifiedBadge">Verified</div>
+                  <div className="reviewDate">{r.date}</div>
+                </div>
+                <div className="rbStars">★★★★★</div>
+                <p>&ldquo;{r.text}&rdquo;</p>
+                <div className="reviewProduct">
+                  <img src={r.thumb} alt={r.product} />
+                  <div>
+                    <span>Purchased</span>
+                    <strong>{r.product}</strong>
+                  </div>
+                </div>
+                <div className="rbAuthor">
+                  <img src={r.avatar} alt={r.name} />
+                  <div>
+                    <div className="rbName">{r.name}</div>
+                    <div className="rbRoleClean">{r.role} - {r.location}</div>
+                    <div className="rbRole">{r.role} · {r.location}</div>
+                  </div>
+                </div>
+              </div>
+              {r.featured && (
+                <div className="featuredImg">
+                  <img src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80" alt="Premium Leather Travel Bag" />
+                </div>
+              )}
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const newArrivalsList = newArrivals.slice(0, 6)
+
+function NewArrivals() {
+  const railRef = useRef<HTMLDivElement>(null)
+  const isDown = useRef(false)
+  const startX = useRef(0)
+  const scrollLeft = useRef(0)
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDown.current = true
+    startX.current = e.pageX - (railRef.current?.offsetLeft ?? 0)
+    scrollLeft.current = railRef.current?.scrollLeft ?? 0
+  }
+
+  return (
+    <section className="testimonialsSection arrivalsSection" id="new-arrivals">
+      <div className="container">
+        <Reveal className="testimonialsHeader">
+          <div className="sectionHeader sectionHeader--left">
+            <div className="eyebrow">New Arrivals</div>
+            <h2 className="sectionTitle">New Pieces Worth Noticing</h2>
+            <p className="sectionDesc">Fresh arrivals selected to make your space, style, and gifting feel instantly upgraded.</p>
+          </div>
+          <span className="testimonialsHint">Drag to explore</span>
+        </Reveal>
+      </div>
+      <div
+        className="newArrivalRail"
+        ref={railRef}
+        onMouseDown={onMouseDown}
+        onMouseLeave={() => { isDown.current = false }}
+        onMouseUp={() => { isDown.current = false }}
+        onMouseMove={(e) => {
+          if (!isDown.current || !railRef.current) return
+          e.preventDefault()
+          const x = e.pageX - railRef.current.offsetLeft
+          railRef.current.scrollLeft = scrollLeft.current - (x - startX.current) * 1.5
+        }}
+        style={{ paddingLeft: 'max(24px, calc((100vw - 1200px) / 2 + 24px))' }}
+      >
+        {newArrivalsList.map((item) => (
+          <Link key={item.slug} href={`/products/${item.slug}`} className="arrivalCard">
+            <img src={item.img} alt={item.title} />
+            <div className="arrivalBody">
+              <span>{item.badge ?? 'New Season'}</span>
+              <h3>{item.title}</h3>
+              <strong>{item.price}</strong>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+const featuredBrands = ['AURELIA', 'MONO', 'KINDRED', 'MAISON IX', 'LUNE', 'ATELIER']
+
+function FeaturedBrands() {
+  return (
+    <section className="section brandSection">
+      <div className="container">
+        <Reveal className="sectionHeader">
+          <div className="eyebrow">Featured Brands</div>
+          <h2 className="sectionTitle">Names Chosen for Taste and Trust</h2>
+          <p className="sectionDesc">A focused mix of makers and edits that keeps the store premium, clear, and easy to browse.</p>
+        </Reveal>
+        <Reveal className="brandRail">
+          {featuredBrands.map((brand) => (
+            <div key={brand} className="brandLogo">{brand}</div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+const bookingPerks = [
+  'Early access to private launches',
+  'VIP-only product drops',
+  'Exclusive offers and gifting edits',
+]
+
+function Newsletter() {
+  return (
+    <section className="section section--surface" id="vip">
+      <div className="container">
+        <Reveal className="bookingCard newsletterCard">
           <div className="bookingLeft">
-            <div className="eyebrow">Book Appointment</div>
-            <h2 className="sectionTitle">Schedule Your Free Inspection</h2>
+            <div className="eyebrow">VIP Access</div>
+            <h2 className="sectionTitle">Get First Access to the Best Drops</h2>
             <p className="sectionDesc" style={{ textAlign: 'left', margin: '0 0 8px' }}>
-              Tell us about your project and our team will reach out to schedule a convenient time.
+              Join for early access to new collections, limited releases, gift edits, and members-only offers.
             </p>
             <div className="bookingPerks">
               {bookingPerks.map((perk) => (
@@ -560,85 +618,94 @@ function Booking() {
             </div>
             <div className="bookingContact">
               <div className="contactIcon">
-                <PhoneIcon size={20} color="#fff" />
+                <MailIcon />
               </div>
               <div>
-                <small>Call Us Anytime</small>
-                <strong>+1 (000) 123 4567</strong>
+                <small>Members receive</small>
+                <strong>New drops before everyone else</strong>
               </div>
             </div>
           </div>
           <form className="bookingForm" onSubmit={(e) => e.preventDefault()}>
             <div className="formGroup">
               <label htmlFor="name">Full Name</label>
-              <input id="name" type="text" placeholder="John Smith" required />
+              <input id="name" type="text" placeholder="Avery Stone" required />
             </div>
             <div className="formGroup">
               <label htmlFor="email">Email Address</label>
-              <input id="email" type="email" placeholder="john@email.com" required />
+              <input id="email" type="email" placeholder="avery@email.com" required />
             </div>
             <div className="formGroup">
-              <label htmlFor="phone">Phone Number</label>
-              <input id="phone" type="tel" placeholder="+1 (000) 000 0000" required />
+              <label htmlFor="interest">Shopping Interest</label>
+              <select id="interest" defaultValue="">
+                <option value="" disabled>Select a category</option>
+                <option>Home Collection</option>
+                <option>Style Essentials</option>
+                <option>Gifting</option>
+                <option>New Arrivals</option>
+              </select>
             </div>
             <div className="formGroup">
-              <label htmlFor="service">Service Needed</label>
-              <select id="service" defaultValue="">
-                <option value="" disabled>Select a service</option>
-                <option>Roof Inspection</option>
-                <option>Roof Repair</option>
-                <option>Roof Replacement</option>
-                <option>Emergency Service</option>
+              <label htmlFor="frequency">Launch Preference</label>
+              <select id="frequency" defaultValue="weekly">
+                <option value="weekly">Weekly edit</option>
+                <option value="monthly">Monthly digest</option>
+                <option value="vip">VIP-only drops</option>
               </select>
             </div>
             <div className="formGroup formGroupFull">
-              <label htmlFor="address">Property Address</label>
-              <input id="address" type="text" placeholder="123 Main St, City, State" />
+              <label htmlFor="note">What are you shopping for?</label>
+              <input id="note" type="text" placeholder="Home refresh, gifting, travel, wardrobe essentials" />
             </div>
-            <button type="submit" className="btnSubmit">Request Free Inspection</button>
+            <button type="submit" className="btnSubmit">Join VIP List</button>
           </form>
-        </div>
+        </Reveal>
       </div>
     </section>
   )
 }
 
-/* ── BLOG ── */
-const blogPosts = [
-  {
-    img: 'https://images.unsplash.com/photo-1591588582259-e675bd2e6088?w=500&q=80',
-    date: 'March 4, 2025',
-    title: 'How to Know When Your Roof Needs Replacement',
-    desc: 'Key signs that indicate it\'s time to replace your roof — from curling shingles to hidden water damage.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=80',
-    date: 'February 18, 2025',
-    title: '5 Roofing Problems Every Homeowner Should Know',
-    desc: 'From missing shingles to improper flashing — the most common issues homeowners face.',
-  },
-]
-
 function Blog() {
+  const blogPosts = [
+    {
+      img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80',
+      date: 'Style Guide',
+      title: 'Make Your Home Look Expensive, Simply',
+      desc: 'Five layering tricks with linen throws, ceramic vessels, and brass trays — no renovation required.',
+    },
+    {
+      img: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&q=80',
+      date: 'Buying Guide',
+      title: 'How to Choose the Right Gift Every Time',
+      desc: 'Our editors share the pieces that consistently earn five-star reviews as gifts.',
+    },
+    {
+      img: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80',
+      date: 'Product Care',
+      title: 'Caring for Leather, Linen & Ceramic',
+      desc: 'Simple maintenance routines that keep premium materials looking their best for years.',
+    },
+  ]
+
   return (
     <section className="section">
       <div className="container">
-        <div className="sectionHeader">
-          <div className="eyebrow">Our Blog</div>
-          <h2 className="sectionTitle">Latest News &amp; Roofing Insights</h2>
-          <p className="sectionDesc">Expert advice to help you protect and maintain your home.</p>
-        </div>
-        <div className="blogGrid">
+        <Reveal className="sectionHeader">
+          <div className="eyebrow">Journal</div>
+          <h2 className="sectionTitle">Quick Ideas for Better Everyday Style</h2>
+          <p className="sectionDesc">Simple guides that help customers shop smarter and use their products beautifully.</p>
+        </Reveal>
+        <div className="blogGrid blogGridThree">
           {blogPosts.map((post) => (
-            <article key={post.title} className="blogCard">
+            <Reveal key={post.title} className="blogCard">
               <img src={post.img} alt={post.title} />
               <div className="blogBody">
                 <div className="blogDate">{post.date}</div>
                 <h3>{post.title}</h3>
                 <p>{post.desc}</p>
-                <a href="#" className="learnMore">Read Article →</a>
+                <Link href="/about" className="learnMore">Read guide</Link>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -646,89 +713,40 @@ function Blog() {
   )
 }
 
-/* ── CTA ── */
 function CtaBanner() {
   return (
-    <section className="ctaBanner">
+    <section className="ctaBanner limitedOffer">
       <div className="container ctaInner">
         <div>
-          <h2>Protect Your Home — Book Your Inspection Today</h2>
-          <p>Don&apos;t wait for small problems to become costly repairs. Get a free, no-obligation roof inspection from our certified team.</p>
+          <div className="eyebrow eyebrow--light">Limited Offer</div>
+          <h2>Free Premium Packaging on Orders Over $150</h2>
+          <p>Perfect for gifts, home refreshes, and special purchases. The offer applies automatically at checkout.</p>
         </div>
-        <a href="#booking" className="btn btnPrimary" style={{ flexShrink: 0, padding: '16px 36px' }}>
-          Book Free Inspection
-        </a>
+        <Link href="/products" className="btn btnPrimary" style={{ flexShrink: 0, padding: '16px 36px' }}>
+          Shop Best Sellers
+        </Link>
       </div>
     </section>
   )
 }
 
-/* ── FOOTER ── */
-function Footer() {
-  return (
-    <footer className="footer">
-      <div className="container">
-        <div className="footerGrid">
-          <div className="footerBrand">
-            <a href="#" className="logo">
-              <div className="logoIcon"><HomeIcon /></div>
-              Roofex
-            </a>
-            <p>Protect your home from leaks, damage, and wear with expert roofing services backed by 25+ years of experience.</p>
-          </div>
-          <div>
-            <h4>Navigation</h4>
-            <ul>
-              {['Home', 'Services', 'About Us', 'Reviews', 'Contact'].map((l) => (
-                <li key={l}><a href={`#${l.toLowerCase().replace(' ', '')}`}>{l}</a></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4>Services</h4>
-            <ul>
-              {['Roof Replacement', 'Roof Inspection', 'Emergency Repair', 'Metal Roofing', 'Gutter Services'].map((s) => (
-                <li key={s}><a href="#services">{s}</a></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4>Contact</h4>
-            <ul className="footerContact">
-              <li><MapPinIcon /> 123 Roofex Lane, Your City, USA</li>
-              <li><PhoneIcon size={16} color="#c8860a" /> +1 (000) 123-4567</li>
-              <li><MailIcon /> info@roofex.com</li>
-            </ul>
-          </div>
-        </div>
-        <div className="footerBottom">
-          <p>© 2026 Roofex. All Rights Reserved.</p>
-          <div className="socialIcons">
-            {['X', 'f', 'in', '▶'].map((icon) => (
-              <a key={icon} href="#" className="socialIcon" aria-label={`Social link ${icon}`}>{icon}</a>
-            ))}
-          </div>
-        </div>
-      </div>
-    </footer>
-  )
-}
-
-/* ── PAGE ── */
 export default function RoofexPage() {
   return (
     <>
-      <FloatingNavbar />
+      <FloatingNavbar activePage="home" />
       <main>
         <Hero />
         <TrustBar />
         <About />
         <Testimonials />
-        <Services />
+        <Collections />
+        <BestSellers />
         <QualityAndProcess />
         <Benefits />
         <ClientReviews />
-        <Booking />
+        <NewArrivals />
+        <FeaturedBrands />
+        <Newsletter />
         <Blog />
         <CtaBanner />
       </main>
