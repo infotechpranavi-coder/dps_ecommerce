@@ -1,39 +1,68 @@
 'use client'
 
-import Link from 'next/link'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { FloatingNavbar } from '@/components/FloatingNavbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
-import { EcomTrustBar } from '@/components/EcomTrustBar'
+import { useCatalog } from '@/components/CatalogProvider'
 import { ProductCard } from '@/components/ProductCard'
-import { AwardIcon, HeartIcon, ShieldIcon, UsersIcon } from '@/components/Icons'
-import { allProducts, bestSellers, categories, limitedProducts, newArrivals, parsePrice } from '@/lib/products'
+import { parsePrice } from '@/lib/catalog-utils'
 
-const filterOptions = ['All', 'Luxury Accessories', 'Home Essentials', 'Smart Technology', 'Travel Collection', 'Lifestyle Collection', 'Exclusive Editions']
 const sortOptions = ['Featured', 'Price: Low to High', 'Price: High to Low', 'Top Rated', 'Newest']
+const collectionOptions = [
+  { label: 'All Products', value: 'all' },
+  { label: 'New Arrivals', value: 'new' },
+  { label: 'Best Sellers', value: 'bestseller' },
+  { label: 'Limited Edition', value: 'limited' },
+] as const
 
-const whyProducts = [
-  { icon: <AwardIcon />, title: 'Premium Materials', desc: 'Every product is vetted for material quality, finish, and longevity before it joins our catalog.' },
-  { icon: <ShieldIcon />, title: 'Exceptional Durability', desc: 'Built to perform beautifully over years of daily use — not just look good on arrival day.' },
-  { icon: <UsersIcon />, title: 'Modern Design', desc: 'Clean lines and timeless silhouettes that complement contemporary homes and wardrobes.' },
-  { icon: <HeartIcon />, title: 'Customer Approved', desc: 'Thousands of verified reviews with a 4.9 average rating across our full collection.' },
-]
+type CollectionFilter = (typeof collectionOptions)[number]['value']
 
-const shoppingGuides = [
-  { title: 'Gift-Ready Packaging', desc: 'Orders over $150 include premium packaging at no extra cost — perfect for birthdays, housewarmings, and holidays.' },
-  { title: 'Detailed Product Pages', desc: 'Every item includes material specs, dimensions, features, and verified customer reviews to help you decide with confidence.' },
-  { title: 'Easy Returns', desc: 'Changed your mind? Return unused items within 30 days in original packaging for a full refund.' },
-]
+function FilterDropdown({
+  title,
+  value,
+  children,
+}: {
+  title: string
+  value: string
+  children: ReactNode
+}) {
+  return (
+    <details className="productsFilterDropdown">
+      <summary className="productsFilterDropdownSummary">
+        <span className="productsFilterDropdownTitle">{title}</span>
+        <span className="productsFilterDropdownValue">{value}</span>
+      </summary>
+      <div className="productsFilterDropdownBody">{children}</div>
+    </details>
+  )
+}
 
 export default function ProductsPage() {
+  const searchParams = useSearchParams()
+  const { products: allProducts, categories } = useCatalog()
+  const filterOptions = useMemo(
+    () => ['All', ...categories.map((cat) => cat.title)],
+    [categories],
+  )
   const [wishlisted, setWishlisted] = useState<string[]>([])
   const [activeFilter, setActiveFilter] = useState('All')
+  const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all')
   const [sortBy, setSortBy] = useState('Featured')
-  const railRef = useRef<HTMLDivElement>(null)
-  const isDown = useRef(false)
-  const startX = useRef(0)
-  const scrollLeft = useRef(0)
+
+  useEffect(() => {
+    const categorySlug = searchParams.get('category')
+    if (categorySlug) {
+      const match = categories.find((c) => c.slug === categorySlug)
+      if (match) setActiveFilter(match.title)
+    }
+
+    const collection = searchParams.get('collection')
+    if (collection === 'new' || collection === 'bestseller' || collection === 'limited') {
+      setCollectionFilter(collection)
+    }
+  }, [searchParams, categories])
 
   const toggleWishlist = (title: string) => {
     setWishlisted((items) => items.includes(title) ? items.filter((item) => item !== title) : [...items, title])
@@ -43,6 +72,14 @@ export default function ProductsPage() {
     let list = activeFilter === 'All'
       ? [...allProducts]
       : allProducts.filter((p) => p.category === activeFilter)
+
+    if (collectionFilter === 'new') {
+      list = list.filter((p) => p.isNew)
+    } else if (collectionFilter === 'bestseller') {
+      list = list.filter((p) => p.isBestSeller)
+    } else if (collectionFilter === 'limited') {
+      list = list.filter((p) => p.isLimited)
+    }
 
     switch (sortBy) {
       case 'Price: Low to High':
@@ -61,243 +98,97 @@ export default function ProductsPage() {
         break
     }
     return list
-  }, [activeFilter, sortBy])
+  }, [activeFilter, collectionFilter, sortBy, allProducts])
 
-  const onMouseDown = (e: React.MouseEvent) => {
-    isDown.current = true
-    startX.current = e.pageX - (railRef.current?.offsetLeft ?? 0)
-    scrollLeft.current = railRef.current?.scrollLeft ?? 0
-  }
+  const activeCollectionLabel =
+    collectionOptions.find((opt) => opt.value === collectionFilter)?.label ?? 'All Products'
+
+  const activeCategory = categories.find((cat) => cat.title === activeFilter)
+  const isCategoryView = activeFilter !== 'All'
 
   return (
     <>
       <FloatingNavbar activePage="products" />
-      <main className="productsPage">
-        <section className="productsHero">
-          <div className="container productsHeroInner">
-            <Reveal>
-              <div className="eyebrow">Premium Collections</div>
-              <h1>Curated For Modern Living</h1>
-              <p>
-                Explore {allProducts.length} handpicked products across six collections — from everyday home essentials
-                to limited-edition pieces crafted for discerning shoppers.
-              </p>
-              <div className="productsHeroStats">
-                <span><strong>{allProducts.length}+</strong> Products</span>
-                <span><strong>6</strong> Collections</span>
-                <span><strong>4.9★</strong> Avg Rating</span>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        <EcomTrustBar />
-
-        <section className="section productsCategories">
-          <div className="container">
-            <Reveal className="sectionHeader sectionHeader--left">
-              <div className="eyebrow">Browse By Category</div>
-              <h2 className="sectionTitle">Find Your Next Favorite</h2>
-              <p className="sectionDesc">Shop by collection — accessories, home, tech, travel, and exclusive editions.</p>
-            </Reveal>
-            <div className="productsCategoryGrid">
-              {categories.map((cat, i) => (
-                <Reveal key={cat.title} className={`productsCategoryCard productsCategoryCard--${cat.size}`} delay={i * 0.05}>
-                  <img src={cat.img} alt={cat.title} />
-                  <div className="productsCategoryOverlay">
-                    <span>{cat.count}</span>
-                    <h3>{cat.title}</h3>
-                    <button type="button" className="productsCategoryBtn" onClick={() => setActiveFilter(cat.title)}>Explore</button>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section arrivalsSection">
-          <div className="container">
-            <Reveal className="testimonialsHeader">
-              <div className="sectionHeader sectionHeader--left">
-                <div className="eyebrow">New Arrivals</div>
-                <h2 className="sectionTitle">Just Dropped This Season</h2>
-                <p className="sectionDesc">Fresh pieces added weekly — scroll to explore the latest edits.</p>
-              </div>
-              <span className="testimonialsHint">Drag to explore</span>
-            </Reveal>
-          </div>
-          <div
-            className="newArrivalRail"
-            ref={railRef}
-            onMouseDown={onMouseDown}
-            onMouseLeave={() => { isDown.current = false }}
-            onMouseUp={() => { isDown.current = false }}
-            onMouseMove={(e) => {
-              if (!isDown.current || !railRef.current) return
-              e.preventDefault()
-              const x = e.pageX - railRef.current.offsetLeft
-              railRef.current.scrollLeft = scrollLeft.current - (x - startX.current) * 1.5
-            }}
-            style={{ paddingLeft: 'max(24px, calc((100vw - 1200px) / 2 + 24px))' }}
-          >
-            {newArrivals.map((item) => (
-              <Link key={item.slug} href={`/products/${item.slug}`} className="arrivalCard">
-                <img src={item.img} alt={item.title} />
-                <div className="arrivalBody">
-                  <span>{item.badge ?? 'New Season'}</span>
-                  <h3>{item.title}</h3>
-                  <strong>{item.price}</strong>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section className="section section--surface productsFeatured" id="bestsellers">
-          <div className="container">
-            <Reveal className="productsFeaturedHeader">
-              <div>
-                <div className="eyebrow">Featured Collection</div>
-                <h2 className="sectionTitle">Best Sellers</h2>
-                <p className="sectionDesc">The products our customers love most — top rated and always in demand.</p>
-              </div>
-              <span className="testimonialsHint">Top rated this season</span>
-            </Reveal>
-            <div className="productsFeaturedGrid">
-              {bestSellers.map((product, i) => (
-                <Reveal key={product.title} delay={i * 0.06}>
-                  <ProductCard
-                    product={product}
-                    wishlisted={wishlisted.includes(product.title)}
-                    onToggleWishlist={() => toggleWishlist(product.title)}
-                    showCategory
-                  />
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
+      <main className="sitePage productsPage">
         <section className="section productsCatalog" id="catalog">
           <div className="container">
-            <Reveal className="sectionHeader">
-              <div className="eyebrow">Full Collection</div>
-              <h2 className="sectionTitle">Shop All Products</h2>
-              <p className="sectionDesc">Filter by category, sort by price or rating, and add favorites to your wishlist.</p>
-            </Reveal>
-
-            <Reveal className="productsToolbar">
-              <div className="productsFilters">
-                {filterOptions.map((filter) => (
-                  <button
-                    key={filter}
-                    type="button"
-                    className={`productsFilterBtn${activeFilter === filter ? ' active' : ''}`}
-                    onClick={() => setActiveFilter(filter)}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-              <div className="productsSort">
-                <label htmlFor="sortBy">Sort by</label>
-                <select id="sortBy" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                  {sortOptions.map((opt) => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              </div>
-            </Reveal>
-
-            <p className="productsResultCount">{filteredProducts.length} products found</p>
-
-            <div className="productGrid">
-              {filteredProducts.map((product, i) => (
-                <Reveal key={product.title} delay={(i % 4) * 0.05}>
-                  <ProductCard
-                    product={product}
-                    wishlisted={wishlisted.includes(product.title)}
-                    onToggleWishlist={() => toggleWishlist(product.title)}
-                    showCategory
-                  />
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section section--navy productsLimited">
-          <div className="container">
-            <Reveal className="sectionHeader">
-              <div className="eyebrow eyebrow--light">Limited Collection</div>
-              <h2 className="sectionTitle" style={{ color: '#fff' }}>Exclusive Releases</h2>
-              <p className="sectionDesc" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                Limited-edition products crafted for customers who appreciate rarity and exceptional quality.
+            <Reveal className="productsCatalogHeader">
+              <h1 className="sectionTitle">
+                {isCategoryView ? activeCategory?.title ?? activeFilter : 'Shop All Products'}
+              </h1>
+              <p className="sectionDesc">
+                {isCategoryView
+                  ? activeCategory?.description ?? `Browse products in ${activeFilter}.`
+                  : 'Browse the full collection — filter by category, sort by price or rating, and save favorites.'}
               </p>
             </Reveal>
-            <div className="productsLimitedGrid">
-              {limitedProducts.map((product, i) => (
-                <Reveal key={product.slug} className="productsLimitedCard" delay={i * 0.08}>
-                  <img src={product.img} alt={product.title} />
-                  <div className="productsLimitedBody">
-                    <span>Limited Edition</span>
-                    <h3>{product.title}</h3>
-                    <p className="productsLimitedDesc">{product.description}</p>
-                    <strong>{product.price}</strong>
-                    <p className="productsLimitedStock">{product.units}</p>
-                    <Link href={`/products/${product.slug}`} className="quickAdd">View Product</Link>
+
+            <div className="productsCatalogLayout">
+              <aside className="productsCatalogSidebar" aria-label="Product filters">
+                <FilterDropdown title="Category" value={activeFilter}>
+                  <div className="productsFilters productsFilters--sidebar">
+                    {filterOptions.map((filter) => (
+                      <button
+                        key={filter}
+                        type="button"
+                        className={`productsFilterBtn${activeFilter === filter ? ' active' : ''}`}
+                        onClick={() => setActiveFilter(filter)}
+                      >
+                        {filter}
+                      </button>
+                    ))}
                   </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
+                </FilterDropdown>
 
-        <section className="section section--surface productsGuides">
-          <div className="container">
-            <Reveal className="sectionHeader">
-              <div className="eyebrow">Shopping With Confidence</div>
-              <h2 className="sectionTitle">Everything You Need Before You Buy</h2>
-            </Reveal>
-            <div className="productsGuidesGrid">
-              {shoppingGuides.map((guide, i) => (
-                <Reveal key={guide.title} className="contactHelpCard" delay={i * 0.06}>
-                  <h3>{guide.title}</h3>
-                  <p>{guide.desc}</p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
+                <FilterDropdown title="Collection" value={activeCollectionLabel}>
+                  <div className="productsFilters productsFilters--sidebar">
+                    {collectionOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        className={`productsFilterBtn${collectionFilter === option.value ? ' active' : ''}`}
+                        onClick={() => setCollectionFilter(option.value)}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </FilterDropdown>
 
-        <section className="section productsWhy">
-          <div className="container">
-            <Reveal className="sectionHeader">
-              <div className="eyebrow">Why Our Products</div>
-              <h2 className="sectionTitle">The Difference Is In The Details</h2>
-            </Reveal>
-            <div className="productsWhyGrid">
-              {whyProducts.map((item, i) => (
-                <Reveal key={item.title} className="featureItem" delay={i * 0.06}>
-                  <div className="featureIcon">{item.icon}</div>
-                  <h4>{item.title}</h4>
-                  <p>{item.desc}</p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
+                <FilterDropdown title="Sort by" value={sortBy}>
+                  <div className="productsFilters productsFilters--sidebar">
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        className={`productsFilterBtn${sortBy === option ? ' active' : ''}`}
+                        onClick={() => setSortBy(option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </FilterDropdown>
 
-        <section className="ctaBanner limitedOffer">
-          <div className="container ctaInner">
-            <div>
-              <div className="eyebrow eyebrow--light">Ready To Shop</div>
-              <h2>Shop Best Sellers</h2>
-              <p>Join thousands of customers who trust Roofex for premium everyday essentials.</p>
+                <p className="productsResultCount">{filteredProducts.length} products</p>
+              </aside>
+
+              <div className="productsCatalogMain">
+                <div className="productGrid productsCatalogGrid">
+                  {filteredProducts.map((product, i) => (
+                    <Reveal key={product.slug} className="productsCatalogReveal" delay={(i % 3) * 0.05}>
+                      <ProductCard
+                        product={product}
+                        wishlisted={wishlisted.includes(product.title)}
+                        onToggleWishlist={() => toggleWishlist(product.title)}
+                        showCategory
+                        variant="showcase"
+                      />
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
             </div>
-            <a href="#bestsellers" className="btn btnPrimary" style={{ flexShrink: 0, padding: '16px 36px' }}>
-              Shop Best Sellers
-            </a>
           </div>
         </section>
       </main>

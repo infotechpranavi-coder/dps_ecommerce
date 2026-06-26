@@ -128,3 +128,54 @@ export const ChevronIcon = ({ open = false }: { open?: boolean }) => (
     <polyline points="6 9 12 15 18 9" />
   </svg>
 )
+
+type LargeIconProps = { size?: number; color?: string }
+
+/** Large line-art icons for About values section (reference layout) */
+export const CraftMedalIcon = ({ size = 96, color = 'currentColor' }: LargeIconProps) => (
+  <svg viewBox="0 0 80 80" width={size} height={size} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <circle cx="40" cy="28" r="15" />
+    <path d="M29 43 L24 66 L40 55 L56 66 L51 43" />
+    <path d="M40 20 L42.2 25.2 L48 25.8 L43.6 29.4 L45 35 L40 32.2 L35 35 L36.4 29.4 L32 25.8 L37.8 25.2 Z" />
+  </svg>
+)
+
+export const CommitmentSealIcon = ({ size = 96, color = 'currentColor' }: LargeIconProps) => (
+  <svg viewBox="0 0 80 80" width={size} height={size} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <circle cx="40" cy="40" r="24" />
+    <circle cx="40" cy="40" r="17" />
+    <path d="M31 40 L37 46 L50 33" />
+  </svg>
+)
+
+export const SolutionsBulbIcon = ({ size = 96, color = 'currentColor' }: LargeIconProps) => (
+  <svg viewBox="0 0 80 80" width={size} height={size} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M40 14 C30 14 24 22 24 31 C24 38 28 43 32 47 L32 54 H48 L48 47 C52 43 56 38 56 31 C56 22 50 14 40 14 Z" />
+    <path d="M34 54 H46" />
+    <path d="M36 58 H44" />
+    <path d="M22 58 C22 58 28 52 40 52 C52 52 58 58 58 58" />
+    <path d="M40 8 V12 M54 18 L51 21 M66 31 H62 M54 44 L51 41 M26 44 L29 41 M14 31 H18 M26 18 L29 21" />
+  </svg>
+)
+
+export const ProtectionChartIcon = ({ size = 96, color = 'currentColor' }: LargeIconProps) => (
+  <svg viewBox="0 0 80 80" width={size} height={size} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <rect x="16" y="42" width="10" height="22" rx="2" />
+    <rect x="35" y="30" width="10" height="34" rx="2" />
+    <rect x="54" y="18" width="10" height="46" rx="2" />
+    <path d="M14 58 L32 44 L48 36 L66 22" />
+    <circle cx="66" cy="22" r="3" fill={color} stroke="none" />
+  </svg>
+)
+
+/** @deprecated use CraftMedalIcon */
+export const DiamondCraftIcon = CraftMedalIcon
+
+/** @deprecated use CommitmentSealIcon */
+export const NecklaceIcon = CommitmentSealIcon
+
+/** @deprecated use ProtectionChartIcon */
+export const ShieldGemIcon = ProtectionChartIcon
+
+/** @deprecated */
+export const GlobeReachIcon = SolutionsBulbIcon

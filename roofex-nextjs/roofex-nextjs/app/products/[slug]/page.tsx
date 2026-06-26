@@ -1,5 +1,8 @@
+export const dynamic = 'force-dynamic'
+
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { brand } from '@/lib/brand'
 import { getAllSlugs, getProductBySlug } from '@/lib/products'
 import ProductDetailPage from './ProductDetailPage'
 
@@ -13,7 +16,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const product = getProductBySlug(params.slug)
   if (!product) return { title: 'Product Not Found' }
   return {
-    title: `${product.title} - Roofex`,
+    title: `${product.title} - ${brand.name}`,
     description: product.shortDescription,
   }
 }

@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { CartIcon, CloseIcon, MenuIcon, RoofLogoIcon } from './Icons'
+import Image from 'next/image'
+import { CloseIcon, MailIcon, MenuIcon } from './Icons'
+import { brand } from '@/lib/brand'
 
-type NavPage = 'home' | 'about' | 'products' | 'contact'
+type NavPage = 'home' | 'about' | 'products' | 'categories' | 'contact'
 
 const navItems: { href: string; label: string; page: NavPage }[] = [
   { href: '/', label: 'Home', page: 'home' },
   { href: '/about', label: 'About', page: 'about' },
   { href: '/products', label: 'Products', page: 'products' },
+  { href: '/categories', label: 'Categories', page: 'categories' },
   { href: '/contact', label: 'Contact', page: 'contact' },
 ]
 
@@ -36,8 +39,19 @@ export function FloatingNavbar({ activePage = 'home' }: { activePage?: NavPage }
       <div className="container floatingNavWrap">
         <div className="floatingNavBar">
           <Link href="/" className="floatingLogo" onClick={closeMenu}>
-            <div className="floatingLogoIcon"><RoofLogoIcon /></div>
-            Roofex
+            <Image
+              src={brand.logoSmall}
+              alt=""
+              width={56}
+              height={56}
+              className="siteLogo siteLogo--nav"
+              priority
+              aria-hidden
+            />
+            <span className="floatingLogoText">
+              <span className="floatingLogoTitle">DB International</span>
+              <span className="floatingLogoSubtitle">Ventures</span>
+            </span>
           </Link>
 
           <nav className="floatingNavLinks" aria-label="Main navigation">
@@ -54,9 +68,9 @@ export function FloatingNavbar({ activePage = 'home' }: { activePage?: NavPage }
           </nav>
 
           <div className="floatingNavEnd">
-            <Link href="/products" className="floatingNavCta" onClick={closeMenu}>
-              <CartIcon />
-              Shop Now
+            <Link href="/contact" className="floatingNavCta" onClick={closeMenu}>
+              <MailIcon />
+              Get in Touch
             </Link>
             <button
               type="button"
@@ -81,9 +95,9 @@ export function FloatingNavbar({ activePage = 'home' }: { activePage?: NavPage }
               {item.label}
             </Link>
           ))}
-          <Link href="/products" className="floatingNavCta" onClick={closeMenu}>
-            <CartIcon />
-            Shop Now
+          <Link href="/contact" className="floatingNavCta" onClick={closeMenu}>
+            <MailIcon />
+            Get in Touch
           </Link>
         </nav>
       </div>
