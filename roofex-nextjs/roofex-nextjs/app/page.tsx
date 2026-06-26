@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { FloatingNavbar } from '@/components/FloatingNavbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
+import { ScrollReveal } from '@/components/ScrollReveal'
 import { ProductCard } from '@/components/ProductCard'
 import { ScrollShrinkHero } from '@/components/home/ScrollShrinkHero'
 import { HomeTrustBar } from '@/components/home/HomeTrustBar'
@@ -13,6 +14,7 @@ import { useCatalog } from '@/components/CatalogProvider'
 import { AwardIcon, ShieldIcon, WrenchIcon } from '@/components/Icons'
 
 import { brand } from '@/lib/brand'
+import { jewelleryImages, optimizeCatalogImage } from '@/lib/product-images'
 
 const SkillsSection = dynamic(
   () => import('@/components/home/SkillsSection').then((m) => ({ default: m.SkillsSection })),
@@ -59,16 +61,16 @@ function BestSellers() {
   return (
     <section className="section section--gold clientReviews bestSellersSection" id="bestsellers">
       <div className="container">
-        <Reveal className="sectionHeader">
+        <ScrollReveal className="sectionHeader">
           <div className="eyebrow eyebrow--light">Best Sellers</div>
           <h2 className="sectionTitle">Most Loved Right Now</h2>
           <p className="sectionDesc">Top-rated picks with verified reviews, detailed product pages, and secure checkout.</p>
-        </Reveal>
-        <Reveal className="reviewMetrics" delay={0.1}>
+        </ScrollReveal>
+        <ScrollReveal className="reviewMetrics" delay={0.1}>
           {displayMetrics.map((metric) => (
             <div key={metric} className="reviewMetric">{metric}</div>
           ))}
-        </Reveal>
+        </ScrollReveal>
         <div className="floatingTrustIndicators" aria-hidden>
           {trustSignals.map((signal) => (
             <span key={signal}>{signal}</span>
@@ -76,20 +78,25 @@ function BestSellers() {
         </div>
         <div className="productGrid bestSellersGrid">
           {bestSellers.map((product, index) => (
-            <Reveal key={product.slug} className="bestSellersReveal" delay={index * 0.08}>
+            <ScrollReveal
+              key={product.slug}
+              className="bestSellersReveal"
+              delay={0.08 + index * 0.05}
+            >
               <ProductCard
                 product={product}
                 wishlisted={wishlisted.includes(product.title)}
                 onToggleWishlist={() => toggleWishlist(product.title)}
                 showCategory
                 variant="showcase"
+                priority={index < 4}
               />
-            </Reveal>
+            </ScrollReveal>
           ))}
         </div>
-        <Reveal className="sectionCtaRow" delay={0.2}>
+        <ScrollReveal className="sectionCtaRow" delay={0.2}>
           <Link href="/products#bestsellers" className="btn btnOutlineWhite">Shop All Best Sellers</Link>
-        </Reveal>
+        </ScrollReveal>
       </div>
     </section>
   )
@@ -102,6 +109,13 @@ const whyChooseBenefits = [
 ]
 
 function Benefits() {
+  const { heroBanners } = useCatalog()
+  const firstBanner = heroBanners[0]
+  const largeImage = firstBanner
+    ? optimizeCatalogImage(firstBanner.image, 900)
+    : jewelleryImages.bridal
+  const largeAlt = firstBanner?.alt ?? 'Bridal imitation jewellery collection'
+
   return (
     <section className="jewelryBenefitsSection" id="why-choose">
       <div className="container jewelryBenefitsInner">
@@ -144,13 +158,13 @@ function Benefits() {
             </div>
             <img
               className="jewelryBenefitsImg jewelryBenefitsImg--small"
-              src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=700&q=80"
-              alt="Close-up of imitation jewellery"
+              src={jewelleryImages.earrings}
+              alt="Close-up of imitation earrings with stone work"
             />
             <img
               className="jewelryBenefitsImg jewelryBenefitsImg--large"
-              src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=900&q=80"
-              alt="Premium products in a refined setting"
+              src={largeImage}
+              alt={largeAlt}
             />
           </div>
         </Reveal>
@@ -171,26 +185,31 @@ function NewArrivals() {
   return (
     <section className="section homeArrivalsSection" id="new-arrivals">
       <div className="container">
-        <Reveal className="sectionHeader">
+        <ScrollReveal className="sectionHeader">
           <div className="eyebrow">New Arrivals</div>
           <h2 className="sectionTitle">New Pieces Worth Noticing</h2>
           <p className="sectionDesc">Fresh imitation jewellery selected for weddings, festivals, and everyday elegance.</p>
-        </Reveal>
+        </ScrollReveal>
         <div className="newArrivalsGrid">
           {newArrivalsList.map((item, index) => (
-            <Reveal key={item.slug} className="newArrivalsGridItem" delay={index * 0.06}>
+            <ScrollReveal
+              key={item.slug}
+              className="newArrivalsGridItem"
+              delay={0.08 + index * 0.05}
+            >
               <ProductCard
                 product={item}
                 wishlisted={wishlisted.includes(item.title)}
                 onToggleWishlist={() => toggleWishlist(item.title)}
                 variant="showcase-compact"
+                priority={index < 4}
               />
-            </Reveal>
+            </ScrollReveal>
           ))}
         </div>
-        <Reveal className="sectionCtaRow" delay={0.2}>
+        <ScrollReveal className="sectionCtaRow" delay={0.2}>
           <Link href="/products" className="btn btnPrimary">View All New Arrivals</Link>
-        </Reveal>
+        </ScrollReveal>
       </div>
     </section>
   )
@@ -202,16 +221,34 @@ export default function HomePage() {
       <FloatingNavbar activePage="home" />
       <main>
         <ScrollShrinkHero />
-        <HomeTrustBar />
-        <NewArrivals />
-        <BestSellers />
-        <SkillsSection />
+        <ScrollReveal direction="up">
+          <HomeTrustBar />
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
+          <NewArrivals />
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
+          <BestSellers />
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
+          <SkillsSection />
+        </ScrollReveal>
         <SteelMarqueeSection />
-        <MarketSectorsSection />
-        <ProductsSection />
-        <Benefits />
-        <PartnersSection />
-        <ClientSaySection />
+        <ScrollReveal direction="up" delay={0.05}>
+          <MarketSectorsSection />
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
+          <ProductsSection />
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
+          <Benefits />
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
+          <PartnersSection />
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
+          <ClientSaySection />
+        </ScrollReveal>
       </main>
       <Footer />
     </>

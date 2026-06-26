@@ -35,26 +35,6 @@ type CatalogContextValue = {
 
 const CatalogContext = createContext<CatalogContextValue | null>(null)
 
-function buildValue(stored: StoredCatalog, loading: boolean, refresh: () => Promise<void>): CatalogContextValue {
-  const products = (stored.products ?? []).map(normalizeProduct)
-  const categoryMeta = stored.categories ?? []
-  const categories = buildCategories(products, categoryMeta)
-  const heroBanners = [...(stored.banners ?? [])]
-    .filter((banner) => banner.active && banner.image.trim())
-    .sort((a, b) => a.sortOrder - b.sortOrder)
-
-  return {
-    products,
-    categories,
-    categoryMeta,
-    heroBanners,
-    bestSellers: getBestSellers(products),
-    newArrivals: getNewArrivals(products),
-    loading,
-    refresh,
-  }
-}
-
 export function CatalogProvider({
   children,
   initialCatalog,
@@ -81,16 +61,30 @@ export function CatalogProvider({
   }, [])
 
   useEffect(() => {
-    refresh()
     const onUpdate = () => refresh()
     window.addEventListener('catalog-updated', onUpdate)
     return () => window.removeEventListener('catalog-updated', onUpdate)
   }, [refresh])
 
-  const value = useMemo(
-    () => buildValue(stored, loading, refresh),
-    [stored, loading, refresh],
-  )
+  const value = useMemo<CatalogContextValue>(() => {
+    const products = (stored.products ?? []).map(normalizeProduct)
+    const categoryMeta = stored.categories ?? []
+    const categories = buildCategories(products, categoryMeta)
+    const heroBanners = [...(stored.banners ?? [])]
+      .filter((banner) => banner.active && banner.image.trim())
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+
+    return {
+      products,
+      categories,
+      categoryMeta,
+      heroBanners,
+      bestSellers: getBestSellers(products),
+      newArrivals: getNewArrivals(products),
+      loading,
+      refresh,
+    }
+  }, [stored, loading, refresh])
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>
 }

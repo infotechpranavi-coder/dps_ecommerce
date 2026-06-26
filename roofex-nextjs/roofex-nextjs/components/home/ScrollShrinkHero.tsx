@@ -16,6 +16,9 @@ const fallbackSlides = [
 const SLIDE_MS = 6000
 
 function optimizeHeroImage(url: string): string {
+  if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
+    return url.replace('/upload/', '/upload/f_auto,q_auto,w_1400/')
+  }
   if (!url.includes('images.unsplash.com')) return url
   try {
     const parsed = new URL(url)

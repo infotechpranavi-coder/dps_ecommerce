@@ -36,10 +36,6 @@ export async function readCatalogFromDb(): Promise<StoredCatalog> {
     return seedMongoCatalog()
   }
 
-  if ((doc.version ?? 0) < CATALOG_VERSION) {
-    return seedMongoCatalog()
-  }
-
   const { _id: _removed, ...catalog } = doc
   return catalog
 }

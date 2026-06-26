@@ -21,12 +21,14 @@ export function ProductCard({
   onToggleWishlist,
   showCategory = false,
   variant = 'default',
+  priority = false,
 }: {
   product: ProductCardData
   wishlisted: boolean
   onToggleWishlist: () => void
   showCategory?: boolean
   variant?: 'default' | 'showcase' | 'showcase-compact'
+  priority?: boolean
 }) {
   const detailHref = product.slug ? `/products/${product.slug}` : '/products'
   const isShowcaseCompact = variant === 'showcase-compact'
@@ -44,7 +46,8 @@ export function ProductCard({
         <img
           src={product.img}
           alt={product.title}
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : 'auto'}
           decoding="async"
           onError={(e) => {
             e.currentTarget.onerror = null

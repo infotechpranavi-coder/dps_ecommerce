@@ -1,12 +1,13 @@
 import 'server-only'
 
+import { cache } from 'react'
 import { getDemoCatalog } from '@/lib/demo-catalog'
 import { getCatalogStorageMode, readCatalogFromDb } from '@/lib/db/catalog-repository'
 import { readStoredCatalog } from '@/lib/catalog-store'
 import type { StoredCatalog } from '@/lib/catalog-utils'
 
-/** Server-side catalog for instant first paint — falls back to demo data. */
-export async function getInitialCatalog(): Promise<StoredCatalog> {
+/** Cached per request — fast repeat reads during SSR. */
+export const getInitialCatalog = cache(async (): Promise<StoredCatalog> => {
   try {
     if (getCatalogStorageMode() === 'mongodb') {
       return await readCatalogFromDb()
@@ -19,4 +20,4 @@ export async function getInitialCatalog(): Promise<StoredCatalog> {
       return getDemoCatalog()
     }
   }
-}
+})

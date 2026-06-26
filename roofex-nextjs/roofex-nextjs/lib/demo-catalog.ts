@@ -4,7 +4,7 @@ import { categoryImages, jewelleryImages, withCategoryProductImages } from './pr
 type CategoryMeta = Omit<Category, 'count'>
 
 /** Demo imitation-jewellery catalog — used until MongoDB / Cloudinary credentials are configured. */
-export const CATALOG_VERSION = 5
+export const CATALOG_VERSION = 6
 
 export const demoCategoryMeta: CategoryMeta[] = [
   {

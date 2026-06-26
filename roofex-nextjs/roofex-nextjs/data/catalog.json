@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "products": [
     {
       "id": "jew-001",
@@ -7,9 +7,9 @@
       "title": "Kundan Choker Necklace Set",
       "price": "₹2,499",
       "rating": "4.9",
-      "img": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
       "category": "Necklace Sets",
       "badge": "Best Seller",
@@ -33,9 +33,9 @@
       "title": "Pearl Layered Mala Set",
       "price": "₹1,899",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
       "category": "Necklace Sets",
       "badge": "New Season",
@@ -60,9 +60,9 @@
       "title": "Temple Coin Necklace",
       "price": "₹1,299",
       "rating": "4.7",
-      "img": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
       "category": "Necklace Sets",
       "shortDescription": "South-Indian inspired coin necklace with matte antique finish.",
@@ -85,9 +85,9 @@
       "title": "Oxidised Silver Pendant Set",
       "price": "₹999",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
       "category": "Necklace Sets",
       "isNew": true,
@@ -111,9 +111,9 @@
       "title": "Classic Gold Jhumka Earrings",
       "price": "₹799",
       "rating": "4.9",
-      "img": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
       "category": "Earrings",
       "badge": "Best Seller",
@@ -137,9 +137,9 @@
       "title": "Kundan Chandbali Earrings",
       "price": "₹1,499",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
       "category": "Earrings",
       "badge": "Top Rated",
@@ -163,9 +163,9 @@
       "title": "Crystal Stud Earring Pack",
       "price": "₹599",
       "rating": "4.7",
-      "img": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
       "category": "Earrings",
       "isNew": true,
@@ -189,9 +189,9 @@
       "title": "Long Tassel Drop Earrings",
       "price": "₹899",
       "rating": "4.6",
-      "img": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
       "category": "Earrings",
       "isNew": true,
@@ -215,9 +215,9 @@
       "title": "Antique Kada Bangle Pair",
       "price": "₹1,199",
       "rating": "4.9",
-      "img": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
       "category": "Bangles & Bracelets",
       "badge": "Best Seller",
@@ -241,9 +241,9 @@
       "title": "Pearl Bangle Set of Four",
       "price": "₹1,699",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
       "category": "Bangles & Bracelets",
       "isNew": true,
@@ -267,9 +267,9 @@
       "title": "Kundan Cuff Bracelet",
       "price": "₹1,099",
       "rating": "4.7",
-      "img": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
       "category": "Bangles & Bracelets",
       "shortDescription": "Open cuff bracelet with kundan centre stone and side filigree.",
@@ -292,9 +292,9 @@
       "title": "Rose Gold Tennis Bracelet",
       "price": "₹1,399",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
       "category": "Bangles & Bracelets",
       "isNew": true,
@@ -318,9 +318,9 @@
       "title": "Emerald Cocktail Ring",
       "price": "₹699",
       "rating": "4.7",
-      "img": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg"
       ],
       "category": "Rings",
       "badge": "Best Seller",
@@ -344,9 +344,9 @@
       "title": "Minimal Gold Band Ring Set",
       "price": "₹499",
       "rating": "4.6",
-      "img": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg"
       ],
       "category": "Rings",
       "isNew": true,
@@ -370,9 +370,9 @@
       "title": "Ruby Oval Statement Ring",
       "price": "₹849",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg"
       ],
       "category": "Rings",
       "shortDescription": "Oval ruby-red stone ring with micro-pave halo in antique gold.",
@@ -395,9 +395,9 @@
       "title": "Bridal Kundan Full Set",
       "price": "₹4,999",
       "rating": "4.9",
-      "img": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg"
       ],
       "category": "Bridal Collection",
       "badge": "Top Rated",
@@ -421,9 +421,9 @@
       "title": "Bridal Pearl Tikka Set",
       "price": "₹3,499",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg"
       ],
       "category": "Bridal Collection",
       "isNew": true,
@@ -447,9 +447,9 @@
       "title": "Bridal Green Stone Choker",
       "price": "₹3,299",
       "rating": "4.9",
-      "img": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg"
       ],
       "category": "Bridal Collection",
       "isNew": true,
@@ -473,9 +473,9 @@
       "title": "Heritage Polki Pendant",
       "price": "₹2,799",
       "rating": "4.9",
-      "img": "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488596/DBS_ECOMMCERCE/categories/limited-edition.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488596/DBS_ECOMMCERCE/categories/limited-edition.jpg"
       ],
       "category": "Limited Edition",
       "badge": "Limited",
@@ -501,9 +501,9 @@
       "title": "Royal Ruby Choker Limited",
       "price": "₹3,999",
       "rating": "4.8",
-      "img": "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488596/DBS_ECOMMCERCE/categories/limited-edition.jpg",
       "images": [
-        "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=700&q=80"
+        "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488596/DBS_ECOMMCERCE/categories/limited-edition.jpg"
       ],
       "category": "Limited Edition",
       "badge": "Limited",
@@ -528,42 +528,42 @@
     {
       "title": "Necklace Sets",
       "slug": "necklace-sets",
-      "img": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg",
       "size": "large",
       "description": "Layered sets, chokers, and statement neckpieces finished in gold and antique tones."
     },
     {
       "title": "Earrings",
       "slug": "earrings",
-      "img": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg",
       "size": "medium",
       "description": "Jhumkas, studs, drops, and chandelier styles for everyday wear and festive dressing."
     },
     {
       "title": "Bangles & Bracelets",
       "slug": "bangles-bracelets",
-      "img": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg",
       "size": "medium",
       "description": "Kadas, kada sets, cuff bracelets, and stackable bangles with kundan and pearl detail."
     },
     {
       "title": "Rings",
       "slug": "rings",
-      "img": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg",
       "size": "medium",
       "description": "Adjustable cocktail rings, stone-set bands, and delicate everyday finger jewellery."
     },
     {
       "title": "Bridal Collection",
       "slug": "bridal-collection",
-      "img": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg",
       "size": "large",
       "description": "Complete bridal edits — necklaces, maang tikka, earrings, and bangles for wedding season."
     },
     {
       "title": "Limited Edition",
       "slug": "limited-edition",
-      "img": "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=700&q=80",
+      "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488596/DBS_ECOMMCERCE/categories/limited-edition.jpg",
       "size": "wide",
       "description": "Small-batch designer-inspired pieces with premium plating and hand-set stones."
     }
@@ -571,21 +571,21 @@
   "banners": [
     {
       "id": "banner-bridal",
-      "image": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=80",
+      "image": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_1600/v1782488597/DBS_ECOMMCERCE/banners/banner-bridal.jpg",
       "alt": "Bridal imitation jewellery collection",
       "active": true,
       "sortOrder": 0
     },
     {
       "id": "banner-bangles",
-      "image": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=1800&q=80",
+      "image": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_1600/v1782488598/DBS_ECOMMCERCE/banners/banner-bangles.jpg",
       "alt": "Gold-tone bangles and bracelet stacks",
       "active": true,
       "sortOrder": 1
     },
     {
       "id": "banner-earrings",
-      "image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=80",
+      "image": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_1600/v1782488599/DBS_ECOMMCERCE/banners/banner-earrings.jpg",
       "alt": "Designer earrings and jhumkas",
       "active": true,
       "sortOrder": 2

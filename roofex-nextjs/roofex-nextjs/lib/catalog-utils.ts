@@ -23,11 +23,17 @@ export function buildCategories(products: Product[], meta: CategoryMeta[]): Cate
 }
 
 export function normalizeProduct(product: Product): Product {
-  const img = productImageForCategory(product.category) || product.img || defaultProductImage
+  const isCloudinary = product.img?.includes('res.cloudinary.com')
+  const img = isCloudinary
+    ? product.img
+    : productImageForCategory(product.category) || product.img || defaultProductImage
+  const images = isCloudinary && product.images?.length
+    ? product.images
+    : jewelleryGallery(img)
   return {
     ...product,
     img,
-    images: jewelleryGallery(img),
+    images,
     isBestSeller:
       product.isBestSeller ??
       ['Best Seller', 'Top Rated'].includes(product.badge ?? ''),

@@ -6,7 +6,6 @@ const POOL = [
   'photo-1515562141207-7a88fb7ce338',
   'photo-1605100804763-247f67b3557e',
   'photo-1615874694520-474822394e73',
-  'photo-1513519245088-0e12902e5a38',
   'photo-1590874103328-eac38a683ce7',
   'photo-1627123424574-724758594e93',
   'photo-1490481651871-ab68de25d43d',
@@ -17,6 +16,23 @@ const POOL = [
 
 export function jewelleryImage(id: string, width = 700): string {
   return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=80`
+}
+
+export function optimizeCatalogImage(url: string, width = 900): string {
+  if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
+    return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`)
+  }
+  if (!url.includes('images.unsplash.com')) return url
+  try {
+    const parsed = new URL(url)
+    parsed.searchParams.set('auto', 'format')
+    parsed.searchParams.set('fit', 'crop')
+    parsed.searchParams.set('w', String(width))
+    parsed.searchParams.set('q', '80')
+    return parsed.toString()
+  } catch {
+    return url
+  }
 }
 
 export const jewelleryImages = {
@@ -31,7 +47,7 @@ export const jewelleryImages = {
   bridal: jewelleryImage('photo-1515562141207-7a88fb7ce338'),
   bridalAlt: jewelleryImage('photo-1615874694520-474822394e73'),
   limited: jewelleryImage('photo-1615874694520-474822394e73'),
-  limitedAlt: jewelleryImage('photo-1513519245088-0e12902e5a38'),
+  limitedAlt: jewelleryImage('photo-1590874103328-eac38a683ce7'),
   flatLay: jewelleryImage('photo-1490481651871-ab68de25d43d'),
   craft: jewelleryImage('photo-1558618666-fcd25c85cd64'),
   display: jewelleryImage('photo-1610701596007-11502861dcfa'),
