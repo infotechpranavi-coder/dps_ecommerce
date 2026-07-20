@@ -46,8 +46,8 @@ export const jewelleryImages = {
   ringsAlt: jewelleryImage('photo-1469334031218-e382a71b716b'),
   bridal: jewelleryImage('photo-1515562141207-7a88fb7ce338'),
   bridalAlt: jewelleryImage('photo-1615874694520-474822394e73'),
-  limited: jewelleryImage('photo-1615874694520-474822394e73'),
-  limitedAlt: jewelleryImage('photo-1590874103328-eac38a683ce7'),
+  limited: jewelleryImage('photo-1515562141207-7a88fb7ce338'),
+  limitedAlt: jewelleryImage('photo-1605100804763-247f67b3557e'),
   flatLay: jewelleryImage('photo-1490481651871-ab68de25d43d'),
   craft: jewelleryImage('photo-1558618666-fcd25c85cd64'),
   display: jewelleryImage('photo-1610701596007-11502861dcfa'),
@@ -74,12 +74,18 @@ export const categoryImages: Record<string, string> = {
 }
 
 const categoryTitleToSlug: Record<string, string> = {
+  'Premium Range': 'necklace-sets',
+  'Essential Range': 'earrings',
+  'Classic Collection': 'bangles-bracelets',
+  'Signature Line': 'rings',
+  'Featured Collection': 'bridal-collection',
+  'Limited Edition': 'limited-edition',
+  // Legacy demo titles
   'Necklace Sets': 'necklace-sets',
   Earrings: 'earrings',
   'Bangles & Bracelets': 'bangles-bracelets',
   Rings: 'rings',
   'Bridal Collection': 'bridal-collection',
-  'Limited Edition': 'limited-edition',
 }
 
 /** Same image used on homepage category cards for this product category. */

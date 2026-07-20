@@ -46,6 +46,10 @@ export async function writeCatalogToDb(data: StoredCatalog): Promise<void> {
   }
 
   const db = await getMongoDb()
+  if (!db) {
+    throw new Error('MongoDB connection is not available')
+  }
+
   await db.collection('catalog').replaceOne(
     CATALOG_FILTER,
     { ...data, version: CATALOG_VERSION, _id: CATALOG_DOC_ID },

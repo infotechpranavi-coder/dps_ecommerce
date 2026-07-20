@@ -4,7 +4,7 @@ import CategoriesPage from './CategoriesPage'
 
 export const metadata: Metadata = {
   title: `Categories - ${brand.name}`,
-  description: `Browse ${brand.name} jewellery collections — necklaces, earrings, bangles, rings, bridal sets, and limited editions.`,
+  description: `Browse ${brand.name} product categories — curated collections with clear stock details and reliable supply.`,
 }
 
 export default function Page() {

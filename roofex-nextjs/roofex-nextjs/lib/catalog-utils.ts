@@ -8,6 +8,8 @@ export type StoredCatalog = {
   products: Product[]
   categories: CategoryMeta[]
   banners: HeroBanner[]
+  /** Homepage text slider terms (after About Us section) */
+  marqueeTerms?: string[]
 }
 
 function countByCategory(name: string, products: Product[]) {

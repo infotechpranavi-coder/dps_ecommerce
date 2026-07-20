@@ -5,7 +5,6 @@ import { FloatingNavbar } from '@/components/FloatingNavbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
 import { useCatalog } from '@/components/CatalogProvider'
-import { brand } from '@/lib/brand'
 
 export default function CategoriesPage() {
   const { categories } = useCatalog()
@@ -14,26 +13,13 @@ export default function CategoriesPage() {
     <>
       <FloatingNavbar activePage="categories" />
       <main className="sitePage categoriesPage">
-        <section className="categoriesHero">
-          <div className="container categoriesHeroInner">
-            <Reveal>
-              <div className="eyebrow">Shop By Category</div>
-              <h1>Jewellery Collections For Every Occasion</h1>
-              <p>
-                Browse {brand.shortName} edits across necklaces, earrings, bangles, bridal sets,
-                and limited releases — each with clear imagery, stock details, and verified reviews.
-              </p>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="section section--surface">
+        <section className="section categoriesCatalog">
           <div className="container">
-            <Reveal className="sectionHeader">
+            <Reveal className="sectionHeader categoriesCatalogHeader">
               <div className="eyebrow">All Categories</div>
-              <h2 className="sectionTitle">Find Your Next Favorite Edit</h2>
+              <h1 className="sectionTitle">Browse Our Collections</h1>
               <p className="sectionDesc">
-                Jump into a collection — image-led cards with quick access to every edit.
+                Explore every collection — business-ready product categories with clear images, honest details, and stock availability on each item.
               </p>
             </Reveal>
             <div className="categoriesGrid">
@@ -51,6 +37,22 @@ export default function CategoriesPage() {
                 </Reveal>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="siteMidCta">
+          <div className="container">
+            <Reveal className="siteMidCtaInner" direction="up">
+              <div className="siteMidCtaCopy">
+                <div className="eyebrow eyebrow--light">Ready to Shop?</div>
+                <h2>Browse products from every category</h2>
+                <p>Find curated edits with clear stock details — or speak with our team for a custom quote.</p>
+              </div>
+              <div className="siteMidCtaActions">
+                <Link href="/products" className="btnOrange">Shop Products</Link>
+                <Link href="/contact" className="btnOutlineWhite">Get in Touch</Link>
+              </div>
+            </Reveal>
           </div>
         </section>
       </main>

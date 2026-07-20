@@ -4,7 +4,7 @@ import { brand } from '@/lib/brand'
 
 export const metadata: Metadata = {
   title: `Products - ${brand.name}`,
-  description: `Browse imitation jewellery from ${brand.name} — necklaces, earrings, bangles, bridal sets, and limited editions.`,
+  description: `Browse quality products from ${brand.name} — curated collections with clear details and dependable delivery.`,
 }
 
 import ProductsPage from './ProductsPage'

@@ -1,20 +1,26 @@
+'use client'
+
+import { useCatalog } from '@/components/CatalogProvider'
 import { ScrollReveal } from '@/components/ScrollReveal'
-import { productMarqueeTerms } from '@/lib/kvs-catalog'
 
 export function SteelMarqueeSection() {
-  const terms = [...productMarqueeTerms, ...productMarqueeTerms]
+  const { marqueeTerms } = useCatalog()
+  const source = marqueeTerms.length > 0 ? marqueeTerms : ['CURATED PRODUCTS']
+  const terms = [...source, ...source]
 
   return (
-    <ScrollReveal as="section" className="uniSteelMarquee" direction="up" aria-label="Product categories">
-      <div className="uniSteelMarqueeViewport">
-        <div className="uniSteelMarqueeTrack">
-          {terms.map((term, i) => (
-            <span key={`${term}-${i}`} className="uniSteelMarqueeItem">
-              {term}
-            </span>
-          ))}
+    <section className="uniSteelMarquee" aria-label="Product highlights">
+      <ScrollReveal direction="up" bounce>
+        <div className="uniSteelMarqueeViewport">
+          <div className="uniSteelMarqueeTrack">
+            {terms.map((term, i) => (
+              <span key={`${term}-${i}`} className="uniSteelMarqueeItem">
+                {term}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
-    </ScrollReveal>
+      </ScrollReveal>
+    </section>
   )
 }

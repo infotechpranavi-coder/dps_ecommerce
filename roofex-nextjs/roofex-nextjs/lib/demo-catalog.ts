@@ -3,51 +3,51 @@ import { categoryImages, jewelleryImages, withCategoryProductImages } from './pr
 
 type CategoryMeta = Omit<Category, 'count'>
 
-/** Demo imitation-jewellery catalog — used until MongoDB / Cloudinary credentials are configured. */
+/** Demo product catalog — used until MongoDB / Cloudinary credentials are configured. */
 export const CATALOG_VERSION = 6
 
 export const demoCategoryMeta: CategoryMeta[] = [
   {
-    title: 'Necklace Sets',
+    title: 'Premium Range',
     slug: 'necklace-sets',
     img: categoryImages['necklace-sets'],
     size: 'large',
-    description: 'Layered sets, chokers, and statement neckpieces finished in gold and antique tones.',
+    description: 'Curated premium products with clear imagery, specifications, and stock availability for retail and wholesale buyers.',
   },
   {
-    title: 'Earrings',
+    title: 'Essential Range',
     slug: 'earrings',
     img: categoryImages.earrings,
     size: 'medium',
-    description: 'Jhumkas, studs, drops, and chandelier styles for everyday wear and festive dressing.',
+    description: 'Everyday product essentials selected for quality, value, and consistent supply across repeat orders.',
   },
   {
-    title: 'Bangles & Bracelets',
+    title: 'Classic Collection',
     slug: 'bangles-bracelets',
     img: categoryImages['bangles-bracelets'],
     size: 'medium',
-    description: 'Kadas, kada sets, cuff bracelets, and stackable bangles with kundan and pearl detail.',
+    description: 'Reliable core products with honest details, dependable finishing, and broad customer appeal.',
   },
   {
-    title: 'Rings',
+    title: 'Signature Line',
     slug: 'rings',
     img: categoryImages.rings,
     size: 'medium',
-    description: 'Adjustable cocktail rings, stone-set bands, and delicate everyday finger jewellery.',
+    description: 'Standout products with clear specifications, competitive pricing, and export-ready presentation.',
   },
   {
-    title: 'Bridal Collection',
+    title: 'Featured Collection',
     slug: 'bridal-collection',
     img: categoryImages['bridal-collection'],
     size: 'large',
-    description: 'Complete bridal edits — necklaces, maang tikka, earrings, and bangles for wedding season.',
+    description: 'Highlighted product edits for seasonal demand, special orders, and high-volume business requirements.',
   },
   {
     title: 'Limited Edition',
     slug: 'limited-edition',
     img: categoryImages['limited-edition'],
     size: 'wide',
-    description: 'Small-batch designer-inspired pieces with premium plating and hand-set stones.',
+    description: 'Small-batch products with premium finishing, limited stock, and priority enquiry support.',
   },
 ]
 
@@ -55,21 +55,21 @@ export const demoHeroBanners: HeroBanner[] = [
   {
     id: 'banner-bridal',
     image: categoryImages['bridal-collection'],
-    alt: 'Bridal imitation jewellery collection',
+    alt: 'Featured product collection',
     active: true,
     sortOrder: 0,
   },
   {
     id: 'banner-bangles',
     image: jewelleryImages.bangles,
-    alt: 'Gold-tone bangles and bracelet stacks',
+    alt: 'Product showcase display',
     active: true,
     sortOrder: 1,
   },
   {
     id: 'banner-earrings',
     image: categoryImages.earrings,
-    alt: 'Designer earrings and jhumkas',
+    alt: 'Curated product selection',
     active: true,
     sortOrder: 2,
   },
@@ -88,7 +88,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=900&q=80',
       'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=900&q=80',
     ],
-    category: 'Necklace Sets',
+    category: 'Premium Range',
     badge: 'Best Seller',
     isBestSeller: true,
     shortDescription: 'Antique gold-plated choker with matching earrings and kundan-style stones.',
@@ -111,7 +111,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=900&q=80',
       'https://images.unsplash.com/photo-1611591437281-460bfec2ed8e?w=900&q=80',
     ],
-    category: 'Necklace Sets',
+    category: 'Premium Range',
     badge: 'New Season',
     isNew: true,
     shortDescription: 'Double-strand pearl mala with gold-toned pendant and stud earrings.',
@@ -134,7 +134,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1506630448388-4e683c2276de?w=900&q=80',
       'https://images.unsplash.com/photo-1617032212942-6268e3ac19ef?w=900&q=80',
     ],
-    category: 'Necklace Sets',
+    category: 'Premium Range',
     shortDescription: 'South-Indian inspired coin necklace with matte antique finish.',
     description:
       'Temple-inspired coin motifs on a long necklace chain with antique matte plating. Pairs beautifully with silk sarees and traditional silk-cotton blends.',
@@ -155,7 +155,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1617032212942-6268e3ac19ef?w=900&q=80',
       'https://images.unsplash.com/photo-1506630448388-4e683c2276de?w=900&q=80',
     ],
-    category: 'Necklace Sets',
+    category: 'Premium Range',
     isNew: true,
     shortDescription: 'Boho oxidised pendant on a black thread with matching jhumka earrings.',
     description:
@@ -177,7 +177,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=900&q=80',
       'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=900&q=80',
     ],
-    category: 'Earrings',
+    category: 'Essential Range',
     badge: 'Best Seller',
     isBestSeller: true,
     shortDescription: 'Medium-sized gold jhumkas with pearl drops and secure push-back closure.',
@@ -200,7 +200,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=900&q=80',
       'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=900&q=80',
     ],
-    category: 'Earrings',
+    category: 'Essential Range',
     badge: 'Top Rated',
     isBestSeller: true,
     shortDescription: 'Crescent chandbali earrings with kundan stones and pearl fringe.',
@@ -222,7 +222,7 @@ export const demoProducts: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1601121141085-8f25f53fdeb3?w=900&q=80',
     ],
-    category: 'Earrings',
+    category: 'Essential Range',
     isNew: true,
     shortDescription: 'Set of three crystal stud pairs in rose, clear, and emerald tones.',
     description:
@@ -244,7 +244,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1611652022417-c9799fdf8737?w=900&q=80',
       'https://images.unsplash.com/photo-1601121141085-8f25f53fdeb3?w=900&q=80',
     ],
-    category: 'Earrings',
+    category: 'Essential Range',
     isNew: true,
     shortDescription: 'Gold chain tassel drops with stone-studded tops for evening looks.',
     description:
@@ -266,7 +266,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1617032210-ef9fc083f110?w=900&q=80',
       'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=900&q=80',
     ],
-    category: 'Bangles & Bracelets',
+    category: 'Classic Collection',
     badge: 'Best Seller',
     isBestSeller: true,
     shortDescription: 'Wide antique kada bangles with engraved floral motifs — pair of two.',
@@ -289,7 +289,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=900&q=80',
       'https://images.unsplash.com/photo-1617032210-ef9fc083f110?w=900&q=80',
     ],
-    category: 'Bangles & Bracelets',
+    category: 'Classic Collection',
     isNew: true,
     shortDescription: 'Stackable pearl bangles in ivory and gold — set of four.',
     description:
@@ -310,7 +310,7 @@ export const demoProducts: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=900&q=80',
     ],
-    category: 'Bangles & Bracelets',
+    category: 'Classic Collection',
     shortDescription: 'Open cuff bracelet with kundan centre stone and side filigree.',
     description:
       'Adjustable open cuff with a central kundan-style stone and filigree sides. Sits comfortably on the wrist without clasp fuss.',
@@ -331,7 +331,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1611652022417-c9799fdf8737?w=900&q=80',
       'https://images.unsplash.com/photo-1601121141085-8f25f53fdeb3?w=900&q=80',
     ],
-    category: 'Bangles & Bracelets',
+    category: 'Classic Collection',
     isNew: true,
     shortDescription: 'Rose gold tennis bracelet with a continuous line of clear crystals.',
     description:
@@ -353,7 +353,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=900&q=80',
       'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=900&q=80',
     ],
-    category: 'Rings',
+    category: 'Signature Line',
     badge: 'Best Seller',
     isBestSeller: true,
     shortDescription: 'Oversized emerald-green stone cocktail ring with gold basket setting.',
@@ -375,7 +375,7 @@ export const demoProducts: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1601121141085-8f25f53fdeb3?w=900&q=80',
     ],
-    category: 'Rings',
+    category: 'Signature Line',
     isNew: true,
     shortDescription: 'Set of three slim gold-plated stackable bands.',
     description:
@@ -397,7 +397,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=900&q=80',
       'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=900&q=80',
     ],
-    category: 'Rings',
+    category: 'Signature Line',
     shortDescription: 'Oval ruby-red stone ring with micro-pave halo in antique gold.',
     description:
       'Vintage-inspired ring with an oval ruby-red centre stone surrounded by a micro-pave halo. Antique gold plating adds warmth for ethnic and fusion outfits.',
@@ -419,7 +419,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1611591437281-460bfec2ed8e?w=900&q=80',
       'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=900&q=80',
     ],
-    category: 'Bridal Collection',
+    category: 'Featured Collection',
     badge: 'Top Rated',
     isBestSeller: true,
     shortDescription: 'Complete bridal set — necklace, earrings, maang tikka, and nose ring.',
@@ -442,7 +442,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1611591437281-460bfec2ed8e?w=900&q=80',
       'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=900&q=80',
     ],
-    category: 'Bridal Collection',
+    category: 'Featured Collection',
     isNew: true,
     shortDescription: 'Pearl and kundan maang tikka set with necklace and earrings.',
     description:
@@ -464,7 +464,7 @@ export const demoProducts: Product[] = [
       'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=900&q=80',
       'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=900&q=80',
     ],
-    category: 'Bridal Collection',
+    category: 'Featured Collection',
     isNew: true,
     shortDescription: 'Emerald-tone choker with side panels and matching jhumka earrings.',
     description:
@@ -537,5 +537,15 @@ export function getDemoCatalog() {
     ),
     categories: demoCategoryMeta,
     banners: demoHeroBanners,
+    marqueeTerms: [
+      'GLOBAL SUPPLY',
+      'WHOLESALE READY',
+      'EXPORT QUALITY',
+      'CURATED PRODUCTS',
+      'BULK ORDERS',
+      'TRUSTED SOURCING',
+      'INTERNATIONAL TRADE',
+      'RELIABLE DELIVERY',
+    ],
   }
 }

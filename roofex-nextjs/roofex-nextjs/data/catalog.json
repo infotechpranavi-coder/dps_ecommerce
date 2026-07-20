@@ -11,7 +11,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
-      "category": "Necklace Sets",
+      "category": "Premium Range",
       "badge": "Best Seller",
       "isBestSeller": true,
       "shortDescription": "Antique gold-plated choker with matching earrings and kundan-style stones.",
@@ -25,7 +25,9 @@
       "material": "Brass alloy with gold plating",
       "sku": "RX-NK-001",
       "reviewCount": 412,
-      "inStock": true
+      "inStock": true,
+      "showInFooter": true,
+      "hidePrice": true
     },
     {
       "id": "jew-002",
@@ -37,7 +39,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
-      "category": "Necklace Sets",
+      "category": "Premium Range",
       "badge": "New Season",
       "isNew": true,
       "shortDescription": "Double-strand pearl mala with gold-toned pendant and stud earrings.",
@@ -64,7 +66,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
-      "category": "Necklace Sets",
+      "category": "Premium Range",
       "shortDescription": "South-Indian inspired coin necklace with matte antique finish.",
       "description": "Temple-inspired coin motifs on a long necklace chain with antique matte plating. Pairs beautifully with silk sarees and traditional silk-cotton blends.",
       "features": [
@@ -89,7 +91,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg"
       ],
-      "category": "Necklace Sets",
+      "category": "Premium Range",
       "isNew": true,
       "shortDescription": "Boho oxidised pendant on a black thread with matching jhumka earrings.",
       "description": "Contemporary oxidised finish with tribal-inspired engraving. Comes with a black cotton thread necklace and small jhumka earrings for casual and fusion looks.",
@@ -115,7 +117,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
-      "category": "Earrings",
+      "category": "Essential Range",
       "badge": "Best Seller",
       "isBestSeller": true,
       "shortDescription": "Medium-sized gold jhumkas with pearl drops and secure push-back closure.",
@@ -141,7 +143,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
-      "category": "Earrings",
+      "category": "Essential Range",
       "badge": "Top Rated",
       "isBestSeller": true,
       "shortDescription": "Crescent chandbali earrings with kundan stones and pearl fringe.",
@@ -167,7 +169,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
-      "category": "Earrings",
+      "category": "Essential Range",
       "isNew": true,
       "shortDescription": "Set of three crystal stud pairs in rose, clear, and emerald tones.",
       "description": "Everyday stud pack with three colourways — rose, clear crystal, and emerald green. Ideal for office wear, brunches, and layering with other earrings.",
@@ -193,7 +195,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg"
       ],
-      "category": "Earrings",
+      "category": "Essential Range",
       "isNew": true,
       "shortDescription": "Gold chain tassel drops with stone-studded tops for evening looks.",
       "description": "Elongated chain tassels with a stone-studded stud top. Moves beautifully with sarees and gowns — a favourite for sangeet and cocktail events.",
@@ -219,7 +221,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
-      "category": "Bangles & Bracelets",
+      "category": "Classic Collection",
       "badge": "Best Seller",
       "isBestSeller": true,
       "shortDescription": "Wide antique kada bangles with engraved floral motifs — pair of two.",
@@ -245,7 +247,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
-      "category": "Bangles & Bracelets",
+      "category": "Classic Collection",
       "isNew": true,
       "shortDescription": "Stackable pearl bangles in ivory and gold — set of four.",
       "description": "Four slim bangles with alternating pearl and gold-tone bands. Stack together or wear separately for a refined festive stack.",
@@ -271,7 +273,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
-      "category": "Bangles & Bracelets",
+      "category": "Classic Collection",
       "shortDescription": "Open cuff bracelet with kundan centre stone and side filigree.",
       "description": "Adjustable open cuff with a central kundan-style stone and filigree sides. Sits comfortably on the wrist without clasp fuss.",
       "features": [
@@ -296,7 +298,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg"
       ],
-      "category": "Bangles & Bracelets",
+      "category": "Classic Collection",
       "isNew": true,
       "shortDescription": "Rose gold tennis bracelet with a continuous line of clear crystals.",
       "description": "A modern tennis bracelet in rose gold plating with prong-set clear crystals. Secures with a box clasp and safety latch for peace of mind.",
@@ -322,7 +324,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg"
       ],
-      "category": "Rings",
+      "category": "Signature Line",
       "badge": "Best Seller",
       "isBestSeller": true,
       "shortDescription": "Oversized emerald-green stone cocktail ring with gold basket setting.",
@@ -348,7 +350,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg"
       ],
-      "category": "Rings",
+      "category": "Signature Line",
       "isNew": true,
       "shortDescription": "Set of three slim gold-plated stackable bands.",
       "description": "Three delicate bands in polished gold plating — wear solo or stacked. Popular for daily wear and as add-on gifts with larger orders.",
@@ -374,7 +376,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg"
       ],
-      "category": "Rings",
+      "category": "Signature Line",
       "shortDescription": "Oval ruby-red stone ring with micro-pave halo in antique gold.",
       "description": "Vintage-inspired ring with an oval ruby-red centre stone surrounded by a micro-pave halo. Antique gold plating adds warmth for ethnic and fusion outfits.",
       "features": [
@@ -399,7 +401,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg"
       ],
-      "category": "Bridal Collection",
+      "category": "Featured Collection",
       "badge": "Top Rated",
       "isBestSeller": true,
       "shortDescription": "Complete bridal set — necklace, earrings, maang tikka, and nose ring.",
@@ -425,7 +427,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg"
       ],
-      "category": "Bridal Collection",
+      "category": "Featured Collection",
       "isNew": true,
       "shortDescription": "Pearl and kundan maang tikka set with necklace and earrings.",
       "description": "Soft pearl tones meet kundan accents in this bridal trio. The maang tikka features a central teardrop pendant with pearl clusters along the chain.",
@@ -451,7 +453,7 @@
       "images": [
         "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg"
       ],
-      "category": "Bridal Collection",
+      "category": "Featured Collection",
       "isNew": true,
       "shortDescription": "Emerald-tone choker with side panels and matching jhumka earrings.",
       "description": "Rich emerald-green stones set in an ornate choker with side panel extensions. Paired with matching medium jhumkas — a favourite for mehendi and wedding ceremonies.",
@@ -526,46 +528,46 @@
   ],
   "categories": [
     {
-      "title": "Necklace Sets",
+      "title": "Premium Range",
       "slug": "necklace-sets",
       "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488590/DBS_ECOMMCERCE/categories/necklace-sets.jpg",
       "size": "large",
-      "description": "Layered sets, chokers, and statement neckpieces finished in gold and antique tones."
+      "description": "Curated premium products with clear imagery, specifications, and stock availability for retail and wholesale buyers."
     },
     {
-      "title": "Earrings",
+      "title": "Essential Range",
       "slug": "earrings",
       "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488591/DBS_ECOMMCERCE/categories/earrings.jpg",
       "size": "medium",
-      "description": "Jhumkas, studs, drops, and chandelier styles for everyday wear and festive dressing."
+      "description": "Everyday product essentials selected for quality, value, and consistent supply across repeat orders."
     },
     {
-      "title": "Bangles & Bracelets",
+      "title": "Classic Collection",
       "slug": "bangles-bracelets",
       "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488592/DBS_ECOMMCERCE/categories/bangles-bracelets.jpg",
       "size": "medium",
-      "description": "Kadas, kada sets, cuff bracelets, and stackable bangles with kundan and pearl detail."
+      "description": "Reliable core products with honest details, dependable finishing, and broad customer appeal."
     },
     {
-      "title": "Rings",
+      "title": "Signature Line",
       "slug": "rings",
       "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488594/DBS_ECOMMCERCE/categories/rings.jpg",
       "size": "medium",
-      "description": "Adjustable cocktail rings, stone-set bands, and delicate everyday finger jewellery."
+      "description": "Standout products with clear specifications, competitive pricing, and export-ready presentation."
     },
     {
-      "title": "Bridal Collection",
+      "title": "Featured Collection",
       "slug": "bridal-collection",
       "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488595/DBS_ECOMMCERCE/categories/bridal-collection.jpg",
       "size": "large",
-      "description": "Complete bridal edits — necklaces, maang tikka, earrings, and bangles for wedding season."
+      "description": "Highlighted product edits for seasonal demand, special orders, and high-volume business requirements."
     },
     {
       "title": "Limited Edition",
       "slug": "limited-edition",
       "img": "https://res.cloudinary.com/dleix7toj/image/upload/f_auto,q_auto,w_800/v1782488596/DBS_ECOMMCERCE/categories/limited-edition.jpg",
       "size": "wide",
-      "description": "Small-batch designer-inspired pieces with premium plating and hand-set stones."
+      "description": "Small-batch products with premium finishing, limited stock, and priority enquiry support."
     }
   ],
   "banners": [
@@ -590,5 +592,15 @@
       "active": true,
       "sortOrder": 2
     }
+  ],
+  "marqueeTerms": [
+    "GLOBAL SUPPLY",
+    "WHOLESALE READY",
+    "EXPORT QUALITY",
+    "CURATED PRODUCTS",
+    "BULK ORDERS",
+    "TRUSTED SOURCING",
+    "INTERNATIONAL TRADE",
+    "RELIABLE DELIVERY"
   ]
 }

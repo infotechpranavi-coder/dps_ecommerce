@@ -22,6 +22,10 @@ export type Product = {
   isNew?: boolean
   isBestSeller?: boolean
   isLimited?: boolean
+  /** Show this product link in the footer Shop Products list */
+  showInFooter?: boolean
+  /** Hide price on product cards and detail page */
+  hidePrice?: boolean
 }
 
 export type Category = {

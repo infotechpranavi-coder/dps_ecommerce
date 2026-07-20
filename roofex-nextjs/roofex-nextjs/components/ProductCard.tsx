@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { CartIcon, EyeIcon, HeartIcon } from './Icons'
+import { PriceDisplay } from './PriceDisplay'
 import { defaultProductImage, productImageForCategory } from '@/lib/product-images'
 
 export type ProductCardData = {
@@ -13,6 +14,7 @@ export type ProductCardData = {
   category?: string
   badge?: string
   compareAt?: string
+  hidePrice?: boolean
 }
 
 export function ProductCard({
@@ -33,9 +35,10 @@ export function ProductCard({
   const detailHref = product.slug ? `/products/${product.slug}` : '/products'
   const isShowcaseCompact = variant === 'showcase-compact'
   const isShowcase = variant === 'showcase' || isShowcaseCompact
+  const showPrice = !product.hidePrice
 
   return (
-    <article className={`productCard productsCatalogCard${isShowcase ? ' productCard--showcase' : ''}${isShowcaseCompact ? ' productCard--showcase-compact' : ''}`}>
+    <article className={`productCard productsCatalogCard${isShowcase ? ' productCard--showcase' : ''}${isShowcaseCompact ? ' productCard--showcase-compact' : ''}${!showPrice ? ' productCard--noPrice' : ''}`}>
       <Link
         href={detailHref}
         className="productCardStretched"
@@ -77,9 +80,13 @@ export function ProductCard({
           <>
             <h3>{product.title}</h3>
             <div className="productShowcaseFooter productShowcaseFooter--compact">
-              <div className="productPriceWrap">
-                <strong>{product.price}</strong>
-              </div>
+              {showPrice ? (
+                <div className="productPriceWrap">
+                  <strong><PriceDisplay value={product.price} as="span" /></strong>
+                </div>
+              ) : (
+                <span className="productEnquireHint">Enquire for price</span>
+              )}
             </div>
           </>
         ) : isShowcase ? (
@@ -93,12 +100,16 @@ export function ProductCard({
               <span>{product.rating} · In stock</span>
             </div>
             <div className="productShowcaseFooter">
-              <div className="productPriceWrap">
-                <strong>{product.price}</strong>
-                {product.compareAt && <s className="productCompareAt">{product.compareAt}</s>}
-              </div>
+              {showPrice ? (
+                <div className="productPriceWrap">
+                  <strong><PriceDisplay value={product.price} as="span" /></strong>
+                  {product.compareAt && <s className="productCompareAt"><PriceDisplay value={product.compareAt} as="span" /></s>}
+                </div>
+              ) : (
+                <span className="productEnquireHint">Enquire for price</span>
+              )}
               <span className="productShowcaseBtn">
-                <CartIcon /> Shop now
+                <CartIcon /> Enquire Now
               </span>
             </div>
           </>
@@ -113,11 +124,15 @@ export function ProductCard({
             </div>
             <h3>{product.title}</h3>
             <div className="productBuyRow">
-              <div className="productPriceWrap">
-                <strong>{product.price}</strong>
-                {product.compareAt && <s className="productCompareAt">{product.compareAt}</s>}
-              </div>
-              <span className="quickAdd"><CartIcon /> View Product</span>
+              {showPrice ? (
+                <div className="productPriceWrap">
+                  <strong><PriceDisplay value={product.price} as="span" /></strong>
+                  {product.compareAt && <s className="productCompareAt"><PriceDisplay value={product.compareAt} as="span" /></s>}
+                </div>
+              ) : (
+                <span className="productEnquireHint">Enquire for price</span>
+              )}
+              <span className="quickAdd"><CartIcon /> Enquire Now</span>
             </div>
           </>
         )}

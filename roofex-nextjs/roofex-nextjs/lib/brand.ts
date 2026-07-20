@@ -4,7 +4,7 @@ export const brand = {
   initials: 'DB',
   tagline: 'Global Reach, Reliable Supply',
   description:
-    'DB International Ventures supplies curated imitation jewellery across India and worldwide — reliable sourcing, quality finishing, and dependable delivery for retailers and shoppers.',
+    'DB International Ventures supplies curated products across India and worldwide — reliable sourcing, quality finishing, and dependable delivery for retailers and shoppers.',
   logo: '/logo/dps_logo-removebg-preview.png',
   logoSmall: '/logo/dpssmall-logoremovebg-preview.png',
   logoFull: '/logo/dps%20logo.jpeg',
@@ -20,6 +20,6 @@ export const brand = {
 } as const
 
 export const siteMetadata = {
-  title: `${brand.name} | Imitation Jewellery`,
-  description: `${brand.tagline}. Shop necklaces, earrings, bangles, bridal sets, and limited-edition imitation jewellery from ${brand.name}.`,
+  title: `${brand.name} | ${brand.tagline}`,
+  description: `${brand.tagline}. Shop quality products from ${brand.name} with dependable delivery and trusted supply.`,
 }

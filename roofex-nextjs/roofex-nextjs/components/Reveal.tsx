@@ -6,11 +6,15 @@ export function Reveal({
   children,
   className = '',
   delay = 0,
+  direction = 'up',
+  bounce = true,
   eager = false,
 }: {
   children: React.ReactNode
   className?: string
   delay?: number
+  direction?: 'up' | 'down' | 'left' | 'right'
+  bounce?: boolean
   /** Skip animation — content stays visible immediately */
   eager?: boolean
 }) {
@@ -19,7 +23,12 @@ export function Reveal({
   }
 
   return (
-    <ScrollReveal className={className} delay={delay} direction="up">
+    <ScrollReveal
+      className={className}
+      delay={delay}
+      direction={direction}
+      bounce={bounce}
+    >
       {children}
     </ScrollReveal>
   )

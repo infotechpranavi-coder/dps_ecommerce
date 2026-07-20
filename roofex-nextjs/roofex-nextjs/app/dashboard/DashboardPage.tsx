@@ -6,12 +6,13 @@ import type { HeroBanner, Product } from '@/lib/product-types'
 import { slugify, type CategoryMeta, type StoredCatalog } from '@/lib/catalog-utils'
 import { brand } from '@/lib/brand'
 
-type Tab = 'products' | 'categories' | 'banners'
+type Tab = 'products' | 'categories' | 'banners' | 'marquee'
 
 const navItems: { id: Tab; label: string; hint: string }[] = [
   { id: 'products', label: 'Products', hint: 'Manage catalogue items' },
   { id: 'categories', label: 'Categories', hint: 'Collection groups' },
   { id: 'banners', label: 'Hero Banners', hint: 'Homepage hero slides' },
+  { id: 'marquee', label: 'Text Slider', hint: 'Homepage ticker after About' },
 ]
 
 const emptyProduct = (): Product => ({
@@ -32,6 +33,8 @@ const emptyProduct = (): Product => ({
   isNew: false,
   isBestSeller: false,
   isLimited: false,
+  showInFooter: false,
+  hidePrice: false,
 })
 
 const emptyCategory = (): CategoryMeta => ({
@@ -65,6 +68,7 @@ export default function DashboardPage() {
   const [editingBanner, setEditingBanner] = useState<HeroBanner | null>(null)
   const [isNewBanner, setIsNewBanner] = useState(false)
   const [bannerEditId, setBannerEditId] = useState('')
+  const [marqueeDraft, setMarqueeDraft] = useState('')
 
   const loadCatalog = useCallback(async () => {
     setLoading(true)
@@ -75,6 +79,7 @@ export default function DashboardPage() {
       ])
       const data = (await catalogRes.json()) as StoredCatalog
       setCatalog(data)
+      setMarqueeDraft((data.marqueeTerms ?? []).join('\n'))
       if (metaRes.ok) {
         const meta = (await metaRes.json()) as { storage: 'mongodb' | 'file' }
         setStorageMode(meta.storage)
@@ -255,6 +260,16 @@ export default function DashboardPage() {
     })
   }
 
+  const saveMarqueeTerms = async () => {
+    if (!catalog) return
+    const marqueeTerms = marqueeDraft
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+    setMarqueeDraft(marqueeTerms.join('\n'))
+    await saveCatalog({ ...catalog, marqueeTerms })
+  }
+
   const renderPanel = () => {
     if (loading) return <p className="dashboardLoading">Loading catalog…</p>
     if (!catalog) return <p className="dashboardLoading">Could not load catalog.</p>
@@ -290,12 +305,14 @@ export default function DashboardPage() {
                       </div>
                     </td>
                     <td>{product.category}</td>
-                    <td>{product.price}</td>
+                    <td>{product.hidePrice ? 'Hidden' : product.price}</td>
                     <td>
                       <div className="dashboardFlags">
                         {product.isNew && <span className="dashboardFlag">New</span>}
                         {product.isBestSeller && <span className="dashboardFlag">Best</span>}
                         {product.isLimited && <span className="dashboardFlag">Limited</span>}
+                        {product.showInFooter && <span className="dashboardFlag">Footer</span>}
+                        {product.hidePrice && <span className="dashboardFlag">No price</span>}
                       </div>
                     </td>
                     <td>
@@ -319,7 +336,7 @@ export default function DashboardPage() {
           <div className="dashboardPanelHead">
             <div>
               <h2>Categories</h2>
-              <p className="dashboardPanelDesc">{catalog.categories.length} jewellery collections</p>
+              <p className="dashboardPanelDesc">{catalog.categories.length} product categories</p>
             </div>
             <button type="button" className="btnOrange" onClick={openNewCategory}>+ Add Category</button>
           </div>
@@ -342,13 +359,48 @@ export default function DashboardPage() {
       )
     }
 
+    if (tab === 'marquee') {
+      return (
+        <section className="dashboardPanel">
+          <div className="dashboardPanelHead">
+            <div>
+              <h2>Text Slider</h2>
+              <p className="dashboardPanelDesc">
+                Words that scroll in the homepage ticker just after the About Us section. One phrase per line.
+              </p>
+            </div>
+            <button type="button" className="btnOrange" onClick={saveMarqueeTerms} disabled={saving}>
+              {saving ? 'Saving…' : 'Save Slider Text'}
+            </button>
+          </div>
+          <label className="dashboardMarqueeEditor">
+            <span>Slider phrases</span>
+            <textarea
+              rows={10}
+              value={marqueeDraft}
+              onChange={(e) => setMarqueeDraft(e.target.value)}
+              placeholder={'GLOBAL SUPPLY\nWHOLESALE READY\nEXPORT QUALITY'}
+            />
+          </label>
+          <div className="dashboardMarqueePreview" aria-label="Slider preview">
+            {(marqueeDraft.split('\n').map((line) => line.trim()).filter(Boolean).length
+              ? marqueeDraft.split('\n').map((line) => line.trim()).filter(Boolean)
+              : ['Add phrases above']
+            ).map((term, i) => (
+              <span key={`${term}-${i}`} className="dashboardMarqueeChip">{term}</span>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
     return (
       <section className="dashboardPanel">
         <div className="dashboardPanelHead">
           <div>
             <h2>Hero Banners</h2>
             <p className="dashboardPanelDesc">
-              Active banners rotate in the homepage hero section. Use wide jewellery images (1600px+).
+              Active banners rotate in the homepage hero section. Use wide product images (1600px+).
             </p>
           </div>
           <button type="button" className="btnOrange" onClick={openNewBanner}>+ Add Banner</button>
@@ -417,8 +469,8 @@ export default function DashboardPage() {
               ))}
             </nav>
             <div className="dashboardSidebarNote">
-              <strong>Homepage hero</strong>
-              <p>Banners marked active appear in the hero carousel on the home page.</p>
+              <strong>Homepage content</strong>
+              <p>Use Text Slider for the ticker after About Us, and Hero Banners for the top slideshow.</p>
             </div>
           </aside>
 
@@ -450,7 +502,7 @@ export default function DashboardPage() {
                   <label>Slug<input value={editingProduct.slug} onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value })} placeholder="auto-from-title" /></label>
                 </div>
                 <div className="dashboardFormRow">
-                  <label>Price<input value={editingProduct.price} onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })} required /></label>
+                  <label>Price<input value={editingProduct.price} onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })} required={!editingProduct.hidePrice} disabled={!!editingProduct.hidePrice} /></label>
                   <label>Category
                     <select value={editingProduct.category} onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })} required>
                       {categoryTitles.map((title) => <option key={title} value={title}>{title}</option>)}
@@ -480,6 +532,22 @@ export default function DashboardPage() {
                   <label className="dashboardCheck">
                     <input type="checkbox" checked={!!editingProduct.isLimited} onChange={(e) => setEditingProduct({ ...editingProduct, isLimited: e.target.checked })} />
                     Limited Edition collection
+                  </label>
+                  <label className="dashboardCheck">
+                    <input type="checkbox" checked={!!editingProduct.showInFooter} onChange={(e) => setEditingProduct({ ...editingProduct, showInFooter: e.target.checked })} />
+                    Show in footer (Shop Products)
+                  </label>
+                  <label className="dashboardCheck">
+                    <input
+                      type="checkbox"
+                      checked={!!editingProduct.hidePrice}
+                      onChange={(e) => setEditingProduct({
+                        ...editingProduct,
+                        hidePrice: e.target.checked,
+                        price: e.target.checked ? (editingProduct.price || '₹0') : editingProduct.price,
+                      })}
+                    />
+                    Hide price (show enquire only)
                   </label>
                 </div>
 
@@ -534,7 +602,7 @@ export default function DashboardPage() {
                 }}
               >
                 <label>Image URL<input value={editingBanner.image} onChange={(e) => setEditingBanner({ ...editingBanner, image: e.target.value })} required placeholder="https://..." /></label>
-                <label>Alt text / label<input value={editingBanner.alt} onChange={(e) => setEditingBanner({ ...editingBanner, alt: e.target.value })} placeholder="Bridal jewellery collection" /></label>
+                <label>Alt text / label<input value={editingBanner.alt} onChange={(e) => setEditingBanner({ ...editingBanner, alt: e.target.value })} placeholder="Featured product collection" /></label>
                 <div className="dashboardFormRow">
                   <label>Sort order<input type="number" min={0} value={editingBanner.sortOrder} onChange={(e) => setEditingBanner({ ...editingBanner, sortOrder: Number(e.target.value) })} /></label>
                   <label className="dashboardCheck dashboardCheck--inline">

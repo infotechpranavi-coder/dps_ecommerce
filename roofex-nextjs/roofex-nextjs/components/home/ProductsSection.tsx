@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { ScrollReveal } from '@/components/ScrollReveal'
-import { YellowScribble } from '@/components/UniIcons'
 import { useCatalog } from '@/components/CatalogProvider'
 import { productsHome } from '@/lib/content'
 import {
@@ -16,27 +15,27 @@ import { categoryImages } from '@/lib/product-images'
 
 const partners = [
   {
-    name: 'KUNDAN CRAFT',
+    name: 'APEX SUPPLY',
     img: categoryImages['bridal-collection'],
   },
   {
-    name: 'PEARL HOUSE',
+    name: 'GLOBAL TRADERS',
     img: categoryImages['necklace-sets'],
   },
   {
-    name: 'ANTIQUE GOLD',
+    name: 'PRIME SOURCING',
     img: categoryImages.earrings,
   },
   {
-    name: 'BRIDAL EDIT',
+    name: 'ELITE EXPORTS',
     img: categoryImages['bangles-bracelets'],
   },
   {
-    name: 'JHUMKA ATELIER',
+    name: 'NOVA WHOLESALE',
     img: categoryImages.rings,
   },
   {
-    name: 'TEMPLE WORKS',
+    name: 'TRUST PARTNERS',
     img: categoryImages['limited-edition'],
   },
 ] as const
@@ -47,17 +46,21 @@ export function PartnersSection() {
   return (
     <section className="uniPartners">
       <div className="uniContainer">
-        <ScrollReveal className="uniPartnersHeader">
-          <p className="uniPartnersEyebrow">Jewellery Makers</p>
-          <h2 className="uniPartnersTitle">Craft partners chosen for finish and trust</h2>
+        <ScrollReveal className="uniPartnersHeader" bounce>
+          <p className="uniPartnersEyebrow">Trusted Suppliers</p>
+          <h2 className="uniPartnersTitle">Supply partners chosen for quality and trust</h2>
         </ScrollReveal>
       </div>
 
-      <ScrollReveal className="uniPartnersMarqueeWrap" delay={0.12} direction="up" aria-label="Jewellery partners">
+      <ScrollReveal className="uniPartnersMarqueeWrap" delay={0.05} direction="none" aria-label="Supply partners">
         <div className="uniPartnersMarqueeViewport">
           <div className="uniPartnersMarqueeTrack">
             {slides.map((partner, index) => (
-              <article key={`${partner.name}-${index}`} className="uniPartnersCard">
+              <article
+                key={`${partner.name}-${index}`}
+                className="uniPartnersCard"
+                style={{ ['--slide-i' as string]: index % partners.length }}
+              >
                 <div className="uniPartnersCardMedia">
                   <img src={partner.img} alt={partner.name} loading="lazy" />
                 </div>
@@ -84,20 +87,21 @@ export function ProductsSection() {
       <div className="uniContainer">
         <div className="uniProductsSplit">
           <aside className="uniProductsStickyCol" aria-label="Shop by category">
-            <ScrollReveal className="uniProductsSticky" direction="left">
-              <p className="uniProductsEyebrow">{productsHome.eyebrow}</p>
-              <h2 className="uniProductsTitle">{productsHome.title}</h2>
-              <p className="uniProductsLead">{productsHome.lead}</p>
-              <YellowScribble />
-              <Link href="/categories" className="uniProductsStickyLink">
-                View all categories →
-              </Link>
-            </ScrollReveal>
+            <div className="uniProductsSticky">
+              <ScrollReveal direction="left">
+                <p className="uniProductsEyebrow">Our Collections</p>
+                <h2 className="uniProductsTitle">{productsHome.title}</h2>
+                <p className="uniProductsLead">{productsHome.lead}</p>
+                <Link href="/categories" className="uniProductsStickyLink">
+                  View all categories →
+                </Link>
+              </ScrollReveal>
+            </div>
           </aside>
 
-          <ScrollReveal className="uniProductsCardsTrack" direction="up" aria-label="Jewellery categories">
+          <div className="uniProductsCardsTrack" aria-label="Product categories">
             {displayCategories.map((item) => (
-              <div key={item.slug} className="uniProductsCardReveal">
+              <ScrollReveal key={item.slug} className="uniProductsCardReveal" direction="up">
                 <Link href={`/products?category=${item.slug}`} className="uniProductsCard">
                   <div className="uniProductsCardImgWrap">
                     <img
@@ -114,15 +118,18 @@ export function ProductsSection() {
                   </div>
                   <div className="uniProductsCardContent">
                     <h3>{item.title}</h3>
-                    <p className="uniProductsCardDesc">{item.description}</p>
-                    <span className="uniProductsCardArrow" aria-hidden>
-                      →
+                    <p className="uniProductsCardDesc">{item.tagline}</p>
+                    <span className="uniProductsCardCta">
+                      Explore collection
+                      <span className="uniProductsCardArrow" aria-hidden>
+                        →
+                      </span>
                     </span>
                   </div>
                 </Link>
-              </div>
+              </ScrollReveal>
             ))}
-          </ScrollReveal>
+          </div>
         </div>
       </div>
     </section>

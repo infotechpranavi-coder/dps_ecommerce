@@ -35,11 +35,17 @@ function needsReseed(data: StoredCatalog): boolean {
 
 function normalizeCatalog(data: StoredCatalog): StoredCatalog {
   const seed = getSeedCatalog()
+  const products = Array.isArray(data.products) ? data.products : seed.products
+  const categories = Array.isArray(data.categories) ? data.categories : seed.categories
   return {
     version: data.version ?? CATALOG_VERSION,
-    products: data.products.map(normalizeProduct),
-    categories: data.categories,
+    products: products.map(normalizeProduct),
+    categories,
     banners: data.banners?.length ? data.banners : seed.banners,
+    marqueeTerms:
+      Array.isArray(data.marqueeTerms) && data.marqueeTerms.length
+        ? data.marqueeTerms.map((term) => String(term).trim()).filter(Boolean)
+        : seed.marqueeTerms,
   }
 }
 

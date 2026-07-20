@@ -2,15 +2,15 @@
 
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { brand } from '@/lib/brand'
 import { jewelleryImages } from '@/lib/product-images'
 import { useCatalog } from '@/components/CatalogProvider'
 
 const fallbackSlides = [
-  { image: jewelleryImages.bridal, alt: 'Bridal imitation jewellery collection', id: 'fallback-1' },
-  { image: jewelleryImages.bangles, alt: 'Gold-tone bangles and bracelet stacks', id: 'fallback-2' },
-  { image: jewelleryImages.earrings, alt: 'Designer earrings and jhumkas', id: 'fallback-3' },
+  { image: jewelleryImages.bridal, alt: 'Featured product collection', id: 'fallback-1' },
+  { image: jewelleryImages.bangles, alt: 'Product showcase display', id: 'fallback-2' },
+  { image: jewelleryImages.earrings, alt: 'Curated product selection', id: 'fallback-3' },
 ] as const
 
 const SLIDE_MS = 6000
@@ -57,13 +57,20 @@ export function ScrollShrinkHero() {
     offset: ['start start', 'end end'],
   })
 
-  const shrinkAmount = useTransform(scrollYProgress, [0, 0.55, 1], [0, 0.72, 1])
-  const cardScale = useTransform(shrinkAmount, (v) => 1 - v * 0.09)
-  const cardRadius = useTransform(shrinkAmount, (v) => v * 52)
-  const stickyPad = useTransform(shrinkAmount, (v) => v * 34)
-  const stickyPadBottom = useTransform(shrinkAmount, (v) => v * 22)
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, reducedMotion ? 0 : -32])
-  const handoffOpacity = useTransform(scrollYProgress, [0.4, 0.95, 1], [0, 0.5, 1])
+  const rawShrinkAmount = useTransform(scrollYProgress, [0, 0.18, 1], [0, 0.08, 1])
+  const shrinkAmount = useSpring(rawShrinkAmount, {
+    stiffness: 95,
+    damping: 28,
+    mass: 0.65,
+  })
+  const cardScale = useTransform(shrinkAmount, (v) => 1 - v * 0.065)
+  const cardRadius = useTransform(shrinkAmount, (v) => v * 40)
+  const stickyPad = useTransform(shrinkAmount, (v) => v * 28)
+  const stickyPadBottom = useTransform(shrinkAmount, (v) => v * 18)
+  const rawContentY = useTransform(scrollYProgress, [0, 1], [0, reducedMotion ? 0 : -20])
+  const contentY = useSpring(rawContentY, { stiffness: 90, damping: 26, mass: 0.7 })
+  const rawHandoffOpacity = useTransform(scrollYProgress, [0.48, 0.88, 1], [0, 0.45, 1])
+  const handoffOpacity = useSpring(rawHandoffOpacity, { stiffness: 85, damping: 28 })
 
   useEffect(() => {
     setActiveSlide(0)
@@ -129,27 +136,23 @@ export function ScrollShrinkHero() {
             </div>
 
             <div className="scrollHeroOverlay" aria-hidden />
+            <div className="scrollHeroOverlay scrollHeroOverlay--veil" aria-hidden />
             <div className="scrollHeroOverlay scrollHeroOverlay--scroll scrollHeroOverlay--static" aria-hidden />
 
             <motion.div
-              className="container scrollHeroContent scrollHeroContent--compact"
+              className="container scrollHeroContent scrollHeroContent--panel"
               style={{ y: contentY }}
             >
               <div className="scrollHeroCopy">
-                <div className="scrollHeroBadge">
-                  <span>Est. {brand.founded}</span>
-                  <span className="scrollHeroBadgeDot" aria-hidden />
-                  <span>Imitation Jewellery</span>
-                </div>
+                <p className="scrollHeroEyeline">Est. {brand.founded} · {brand.tagline}</p>
 
                 <h1>
-                  Celebrate
-                  <span className="scrollHeroAccent">Every Moment</span>
+                  <span className="scrollHeroTitleLead">Global products,</span>
+                  <span className="scrollHeroAccent">reliable supply</span>
                 </h1>
 
-                <p>
-                  {brand.name} brings necklaces, earrings, bangles, bridal sets, and limited editions
-                  with quality finishing, reliable supply, and delivery you can count on.
+                <p className="scrollHeroLead">
+                  Curated products for retail and wholesale buyers — quality finishing, honest details, and delivery you can count on.
                 </p>
 
                 <div className="scrollHeroBtns">

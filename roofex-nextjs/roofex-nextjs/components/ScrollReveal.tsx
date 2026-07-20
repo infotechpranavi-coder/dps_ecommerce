@@ -10,13 +10,14 @@ import {
   type ReactNode,
 } from 'react'
 
-type Direction = 'up' | 'down' | 'left' | 'right'
+type Direction = 'up' | 'down' | 'left' | 'right' | 'none'
 
 type ScrollRevealProps = {
   as?: ElementType
   className?: string
   delay?: number
   direction?: Direction
+  bounce?: boolean
   children: ReactNode
   id?: string
 }
@@ -31,6 +32,7 @@ export function ScrollReveal({
   className = '',
   delay = 0,
   direction = 'up',
+  bounce = false,
   children,
   id,
 }: ScrollRevealProps) {
@@ -78,6 +80,7 @@ export function ScrollReveal({
   const classes = [
     'uniReveal',
     `uniReveal--${direction}`,
+    bounce ? 'uniReveal--bounce' : '',
     isVisible ? 'uniReveal--visible' : '',
     className,
   ]

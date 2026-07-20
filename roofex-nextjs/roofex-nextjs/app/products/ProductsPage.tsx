@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { FloatingNavbar } from '@/components/FloatingNavbar'
 import { Footer } from '@/components/Footer'
@@ -11,7 +12,7 @@ import { parsePrice } from '@/lib/catalog-utils'
 
 const sortOptions = ['Featured', 'Price: Low to High', 'Price: High to Low', 'Top Rated', 'Newest']
 const collectionOptions = [
-  { label: 'All Products', value: 'all' },
+  { label: 'All', value: 'all' },
   { label: 'New Arrivals', value: 'new' },
   { label: 'Best Sellers', value: 'bestseller' },
   { label: 'Limited Edition', value: 'limited' },
@@ -101,7 +102,7 @@ export default function ProductsPage() {
   }, [activeFilter, collectionFilter, sortBy, allProducts])
 
   const activeCollectionLabel =
-    collectionOptions.find((opt) => opt.value === collectionFilter)?.label ?? 'All Products'
+    collectionOptions.find((opt) => opt.value === collectionFilter)?.label ?? 'All'
 
   const activeCategory = categories.find((cat) => cat.title === activeFilter)
   const isCategoryView = activeFilter !== 'All'
@@ -113,13 +114,14 @@ export default function ProductsPage() {
         <section className="section productsCatalog" id="catalog">
           <div className="container">
             <Reveal className="productsCatalogHeader">
+              <div className="eyebrow">Catalogue</div>
               <h1 className="sectionTitle">
                 {isCategoryView ? activeCategory?.title ?? activeFilter : 'Shop All Products'}
               </h1>
               <p className="sectionDesc">
                 {isCategoryView
                   ? activeCategory?.description ?? `Browse products in ${activeFilter}.`
-                  : 'Browse the full collection — filter by category, sort by price or rating, and save favorites.'}
+                  : 'Browse our full catalogue — filter by category, compare options, and enquire with clear stock and pricing details.'}
               </p>
             </Reveal>
 
@@ -188,6 +190,22 @@ export default function ProductsPage() {
                   ))}
                 </div>
               </div>
+
+              <aside className="productsCatalogCta" aria-label="Need help">
+                <div className="productsCatalogCtaEyebrow">Need Help Choosing?</div>
+                <h2 className="productsCatalogCtaTitle">Talk to our team about any product</h2>
+                <p className="productsCatalogCtaLead">
+                  Share a product name or SKU — we&apos;ll confirm availability, pricing, and delivery.
+                </p>
+                <div className="productsCatalogCtaActions">
+                  <Link href="/contact" className="productsCatalogCtaBtn">
+                    Enquire Now
+                  </Link>
+                  <Link href="/categories" className="productsCatalogCtaBtn productsCatalogCtaBtn--outline">
+                    Browse Categories
+                  </Link>
+                </div>
+              </aside>
             </div>
           </div>
         </section>

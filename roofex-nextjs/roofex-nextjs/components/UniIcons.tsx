@@ -2,10 +2,11 @@ import type { ReactNode } from 'react'
 import { AwardIcon, ShieldIcon, UsersIcon, WrenchIcon } from '@/components/Icons'
 
 const iconMap: Record<string, () => ReactNode> = {
-  'Curated Selection': () => <AwardIcon />,
-  'Gift-Ready Delivery': () => <WrenchIcon />,
-  'Secure Checkout': () => <ShieldIcon />,
-  'Easy Returns': () => <UsersIcon />,
+  'Curated Products': () => <AwardIcon />,
+  'Curated Jewellery': () => <AwardIcon />,
+  'Reliable Supply': () => <WrenchIcon />,
+  'Secure Enquiries': () => <ShieldIcon />,
+  'Wholesale Ready': () => <UsersIcon />,
 }
 
 export function FeatureIcon({ title }: { title: string }) {

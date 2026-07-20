@@ -1,3 +1,5 @@
+'use client'
+
 import { Reveal } from '@/components/Reveal'
 import { AwardIcon, ClockIcon, ShieldIcon, UsersIcon } from '@/components/Icons'
 

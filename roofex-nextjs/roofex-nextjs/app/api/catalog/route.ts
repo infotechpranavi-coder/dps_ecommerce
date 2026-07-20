@@ -10,18 +10,38 @@ import { CATALOG_VERSION, getDemoCatalog } from '@/lib/demo-catalog'
 
 async function loadCatalog(): Promise<StoredCatalog> {
   if (getCatalogStorageMode() === 'mongodb') {
-    return readCatalogFromDb()
+    try {
+      return await Promise.race([
+        readCatalogFromDb(),
+        new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('MongoDB read timed out')), 5000)
+        }),
+      ])
+    } catch (error) {
+      console.error('[api/catalog] MongoDB read failed — using file catalog:', error)
+      return readStoredCatalog()
+    }
   }
   return readStoredCatalog()
 }
 
 async function saveCatalog(data: StoredCatalog): Promise<void> {
   const payload = { ...data, version: CATALOG_VERSION }
-  if (getCatalogStorageMode() === 'mongodb') {
-    await writeCatalogToDb(payload)
-  }
-  // Always mirror to local file so server-rendered pages stay in sync.
+
+  // Always persist to local file first so dashboard saves stay reliable.
   writeStoredCatalog(payload)
+
+  if (getCatalogStorageMode() === 'mongodb') {
+    // Don't block the dashboard on a slow/unreachable Mongo cluster.
+    void Promise.race([
+      writeCatalogToDb(payload),
+      new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('MongoDB write timed out')), 8000)
+      }),
+    ]).catch((error) => {
+      console.error('[api/catalog] MongoDB write failed — file save kept:', error)
+    })
+  }
 }
 
 export async function GET() {
@@ -64,11 +84,14 @@ export async function PUT(request: Request) {
     const payload: StoredCatalog = {
       ...body,
       banners: body.banners ?? [],
+      marqueeTerms: Array.isArray(body.marqueeTerms) ? body.marqueeTerms : [],
     }
     await saveCatalog(payload)
     return NextResponse.json({ ok: true })
-  } catch {
-    return NextResponse.json({ error: 'Failed to save catalog' }, { status: 500 })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to save catalog'
+    console.error('[api/catalog PUT]', error)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 

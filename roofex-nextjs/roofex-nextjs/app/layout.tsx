@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 import './uni.css'
 import { CatalogProvider } from '@/components/CatalogProvider'
+import { CurrencyProvider } from '@/components/CurrencyProvider'
+import { PageLoader } from '@/components/PageLoader'
+import { FloatingActionButtons } from '@/components/FloatingActionButtons'
 import { brand, siteMetadata } from '@/lib/brand'
 import { getInitialCatalog } from '@/lib/get-initial-catalog'
 
@@ -27,7 +30,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
       <body suppressHydrationWarning>
-        <CatalogProvider initialCatalog={initialCatalog}>{children}</CatalogProvider>
+        <CatalogProvider initialCatalog={initialCatalog}>
+          <CurrencyProvider>
+            <PageLoader />
+            <FloatingActionButtons />
+            {children}
+          </CurrencyProvider>
+        </CatalogProvider>
       </body>
     </html>
   )

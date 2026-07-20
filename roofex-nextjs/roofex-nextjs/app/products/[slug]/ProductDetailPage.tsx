@@ -1,15 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FloatingNavbar } from '@/components/FloatingNavbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
 import { ProductCard } from '@/components/ProductCard'
 import { EcomTrustBar } from '@/components/EcomTrustBar'
-import { CheckIcon, HeartIcon } from '@/components/Icons'
 import { useCatalog } from '@/components/CatalogProvider'
+import { PriceDisplay } from '@/components/PriceDisplay'
 import type { Product } from '@/lib/product-types'
 
 export default function ProductDetailPage({ product }: { product: Product }) {
@@ -17,7 +17,6 @@ export default function ProductDetailPage({ product }: { product: Product }) {
   const { products, categories } = useCatalog()
   const [activeImage, setActiveImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [wishlisted, setWishlisted] = useState(false)
   const [wishlistSlugs, setWishlistSlugs] = useState<string[]>([])
 
   const enquireHref = `/contact?product=${encodeURIComponent(product.title)}&qty=${quantity}#contact-form`
@@ -25,9 +24,6 @@ export default function ProductDetailPage({ product }: { product: Product }) {
   const handleEnquire = () => {
     router.push(enquireHref)
   }
-
-  const thumbStripRef = useRef<HTMLDivElement>(null)
-  const activeThumbRef = useRef<HTMLButtonElement>(null)
 
   const related = products
     .filter((p) => p.category === product.category && p.slug !== product.slug)
@@ -43,25 +39,22 @@ export default function ProductDetailPage({ product }: { product: Product }) {
 
   const imageCount = product.images.length
 
-  const showPrevImage = () => {
-    setActiveImage((i) => (i === 0 ? imageCount - 1 : i - 1))
-  }
-
-  const showNextImage = () => {
-    setActiveImage((i) => (i === imageCount - 1 ? 0 : i + 1))
-  }
-
-  const scrollThumbs = (direction: -1 | 1) => {
-    thumbStripRef.current?.scrollBy({ left: direction * 92, behavior: 'smooth' })
-  }
-
-  useEffect(() => {
-    activeThumbRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'center',
-    })
-  }, [activeImage])
+  const specRows = [
+    { label: 'Category', value: product.category },
+    { label: 'SKU', value: product.sku },
+    product.material ? { label: 'Material', value: product.material } : null,
+    product.dimensions ? { label: 'Size', value: product.dimensions } : null,
+    product.warranty ? { label: 'Warranty', value: product.warranty } : null,
+    {
+      label: 'Availability',
+      value: product.inStock
+        ? product.stockCount != null
+          ? `${product.stockCount} units in stock`
+          : 'In stock — ready to supply'
+        : 'Out of stock',
+    },
+    { label: 'Rating', value: `${product.rating} · ${product.reviewCount} reviews` },
+  ].filter(Boolean) as { label: string; value: string }[]
 
   return (
     <>
@@ -74,95 +67,58 @@ export default function ProductDetailPage({ product }: { product: Product }) {
                 <div className="productDetailMainImg">
                   <img src={product.images[activeImage]} alt={`${product.title} — view ${activeImage + 1}`} />
                   {imageCount > 1 && (
-                    <>
-                      <button
-                        type="button"
-                        className="productDetailImgNav productDetailImgNav--prev"
-                        onClick={showPrevImage}
-                        aria-label="Previous image"
-                      >
-                        ‹
-                      </button>
-                      <button
-                        type="button"
-                        className="productDetailImgNav productDetailImgNav--next"
-                        onClick={showNextImage}
-                        aria-label="Next image"
-                      >
-                        ›
-                      </button>
-                      <span className="productDetailImgCounter">
-                        {activeImage + 1} / {imageCount}
-                      </span>
-                    </>
+                    <span className="productDetailImgCounter">
+                      {activeImage + 1} / {imageCount}
+                    </span>
                   )}
                 </div>
 
                 {imageCount > 1 && (
-                  <div className="productDetailThumbCarousel">
-                    <button
-                      type="button"
-                      className="productDetailThumbNav"
-                      onClick={() => scrollThumbs(-1)}
-                      aria-label="Scroll thumbnails left"
-                    >
-                      ‹
-                    </button>
-                    <div className="productDetailThumbs" ref={thumbStripRef}>
-                      {product.images.map((img, i) => (
-                        <button
-                          key={img}
-                          ref={activeImage === i ? activeThumbRef : undefined}
-                          type="button"
-                          className={`productDetailThumb${activeImage === i ? ' active' : ''}`}
-                          onClick={() => setActiveImage(i)}
-                          aria-label={`Show image ${i + 1}`}
-                          aria-current={activeImage === i ? 'true' : undefined}
-                        >
-                          <img src={img} alt="" />
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      className="productDetailThumbNav"
-                      onClick={() => scrollThumbs(1)}
-                      aria-label="Scroll thumbnails right"
-                    >
-                      ›
-                    </button>
+                  <div className="productDetailThumbRow">
+                    {product.images.map((img, i) => (
+                      <button
+                        key={img}
+                        type="button"
+                        className={`productDetailThumb${activeImage === i ? ' active' : ''}`}
+                        onClick={() => setActiveImage(i)}
+                        aria-label={`Show image ${i + 1}`}
+                        aria-current={activeImage === i ? 'true' : undefined}
+                      >
+                        <img src={img} alt="" />
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
             </aside>
 
             <div className="productDetailInfoCol">
-              <Reveal className="productDetailInfoIntro" delay={0.06}>
+              <Reveal className={`productDetailInfoIntro${!product.hidePrice ? '' : ' productDetailInfoIntro--compact'}`} delay={0.06}>
                 <Link href={categoryHref} className="productDetailEyebrow">
                   {product.category}
                 </Link>
                 <h1 className="productDetailTitle">{product.title}</h1>
                 <p className="productDetailShort">{product.shortDescription}</p>
 
-                <div className="productDetailMetaRow">
-                  <div className="productDetailRatingPill">
-                    <span className="productDetailStars" aria-hidden>★★★★★</span>
-                    <span>{product.rating} · {product.reviewCount} reviews</span>
+                {!product.hidePrice ? (
+                  <div className="productDetailPriceCard">
+                    <div className="productDetailPriceMain">
+                      <strong><PriceDisplay value={product.price} as="span" /></strong>
+                      {product.compareAt && <s><PriceDisplay value={product.compareAt} as="span" /></s>}
+                    </div>
+                    {product.isLimited && product.stockCount && (
+                      <span className="productDetailLimited">Only {product.stockCount} left in stock</span>
+                    )}
                   </div>
-                  <span className={`productDetailStockPill${product.inStock ? '' : ' productDetailStockPill--out'}`}>
-                    {product.inStock ? 'In stock' : 'Out of stock'}
-                  </span>
-                </div>
-
-                <div className="productDetailPriceCard">
-                  <div className="productDetailPriceMain">
-                    <strong>{product.price}</strong>
-                    {product.compareAt && <s>{product.compareAt}</s>}
+                ) : (
+                  <div className="productDetailEnquireNote">
+                    <strong>Price on enquiry</strong>
+                    <span>Share quantity below and our team will confirm pricing.</span>
+                    {product.isLimited && product.stockCount ? (
+                      <span className="productDetailLimited">Only {product.stockCount} left in stock</span>
+                    ) : null}
                   </div>
-                  {product.isLimited && product.stockCount && (
-                    <span className="productDetailLimited">Only {product.stockCount} left in stock</span>
-                  )}
-                </div>
+                )}
 
                 <div className="productDetailActions">
                   <div className="productDetailQty">
@@ -177,52 +133,54 @@ export default function ProductDetailPage({ product }: { product: Product }) {
                   >
                     Enquire
                   </button>
-                  <button
-                    type="button"
-                    className={`productDetailWishlist${wishlisted ? ' active' : ''}`}
-                    onClick={() => setWishlisted(!wishlisted)}
-                    aria-label="Add to wishlist"
-                  >
-                    <HeartIcon />
-                  </button>
                 </div>
               </Reveal>
 
-              <Reveal className="productDetailPanel" delay={0.1}>
-                <h2 className="productDetailPanelTitle">About this product</h2>
-                <p className="productDetailDesc">{product.description}</p>
-                <ul className="productDetailFeatures">
-                  {product.features.map((f) => (
-                    <li key={f}><CheckIcon /> {f}</li>
-                  ))}
-                </ul>
-              </Reveal>
-
-              <Reveal className="productDetailPanel" delay={0.14}>
-                <h2 className="productDetailPanelTitle">Product details</h2>
-                <div className="productDetailSpecs">
-                  {product.material && <div><span>Material</span><strong>{product.material}</strong></div>}
-                  {product.dimensions && <div><span>Dimensions</span><strong>{product.dimensions}</strong></div>}
-                  <div><span>SKU</span><strong>{product.sku}</strong></div>
-                  {product.warranty && <div><span>Warranty</span><strong>{product.warranty}</strong></div>}
-                  <div><span>Category</span><strong>{product.category}</strong></div>
-                  {product.stockCount != null && (
-                    <div><span>Availability</span><strong>{product.stockCount} units</strong></div>
-                  )}
-                </div>
+              <Reveal className="productDetailTrustWrap" delay={0.12}>
+                <EcomTrustBar variant="panel" />
               </Reveal>
             </div>
           </div>
         </section>
 
-        <EcomTrustBar />
+        <section className="productDetailSpecsSection">
+          <div className="container">
+            <Reveal className="productDetailNavyBox productDetailCombinedBox" delay={0.1}>
+              <div className="productDetailCombinedGrid">
+                <div className="productDetailCombinedAbout">
+                  <h2 className="productDetailNavyBoxTitle">About Product</h2>
+                  <p className="productDetailAboutLead">{product.description}</p>
+                  {product.features.length > 0 && (
+                    <ul className="productDetailAboutFeatures">
+                      {product.features.map((feature) => (
+                        <li key={feature}>{feature}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="productDetailCombinedSpecs">
+                  <h2 className="productDetailNavyBoxTitle">Specifications</h2>
+                  <div className="productDetailSpecList">
+                    {specRows.map((row) => (
+                      <div key={row.label} className="productDetailSpecRow">
+                        <span>{row.label}</span>
+                        <strong>{row.value}</strong>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
 
         {related.length > 0 && (
           <section className="section productDetailRelated">
             <div className="container">
               <Reveal className="sectionHeader">
                 <div className="eyebrow">Similar Products</div>
-                <h2 className="sectionTitle sectionTitle--display">More Products</h2>
+                <h2 className="sectionTitle">More Products</h2>
               </Reveal>
               <div className="productGrid productDetailRelatedGrid">
                 {related.map((item, i) => (
@@ -251,7 +209,7 @@ export default function ProductDetailPage({ product }: { product: Product }) {
             <div>
               <p className="eyebrow">Need Help Choosing?</p>
               <h2>Our team can guide your purchase</h2>
-              <p>Questions about sizing, materials, or gifting? Our concierge team responds within 2 hours.</p>
+              <p>Questions about specifications, availability, or bulk orders? Our team responds within 2 hours.</p>
             </div>
             <Link href={enquireHref} className="btn btnPrimary">
               Contact Support

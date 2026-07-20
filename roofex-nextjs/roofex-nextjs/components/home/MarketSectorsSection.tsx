@@ -11,15 +11,14 @@ export function MarketSectorsSection() {
   return (
     <section className="uniSectors" id="sectors">
       <div className="uniContainer">
-        <ScrollReveal as="header" className="uniSectorsTitleWrap">
-          <p className="uniSectorsEyebrow">Collections</p>
+        <ScrollReveal className="uniSectorsTitleWrap" bounce>
           <h2 className="uniSectorsTitle">{sectorsSection.title}</h2>
           <p className="uniSectorsTagline">{sectorsSection.tagline}</p>
         </ScrollReveal>
       </div>
 
-      <ScrollReveal className="uniSectorsMarqueeWrap" delay={0.12} direction="up">
-        <div aria-label="Jewellery collections">
+      <ScrollReveal className="uniSectorsMarqueeWrap" delay={0.08} direction="right">
+        <div aria-label="Product collections">
           <div className="uniSectorsMarqueeViewport">
             <div className="uniSectorsMarqueeTrack">
               {slides.map((collection, index) => (
@@ -27,6 +26,7 @@ export function MarketSectorsSection() {
                   key={`${collection.slug}-${index}`}
                   href={`/products?category=${collection.slug}`}
                   className="uniSectorsSlide"
+                  style={{ ['--slide-i' as string]: index }}
                 >
                   <div className="uniSectorsSlideMedia">
                     <img

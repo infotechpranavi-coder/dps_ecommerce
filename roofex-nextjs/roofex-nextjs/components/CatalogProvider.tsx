@@ -27,6 +27,7 @@ type CatalogContextValue = {
   categories: Category[]
   categoryMeta: CategoryMeta[]
   heroBanners: HeroBanner[]
+  marqueeTerms: string[]
   bestSellers: Product[]
   newArrivals: Product[]
   loading: boolean
@@ -73,12 +74,26 @@ export function CatalogProvider({
     const heroBanners = [...(stored.banners ?? [])]
       .filter((banner) => banner.active && banner.image.trim())
       .sort((a, b) => a.sortOrder - b.sortOrder)
+    const marqueeTerms =
+      stored.marqueeTerms?.length
+        ? stored.marqueeTerms
+        : [
+            'GLOBAL SUPPLY',
+            'WHOLESALE READY',
+            'EXPORT QUALITY',
+            'CURATED PRODUCTS',
+            'BULK ORDERS',
+            'TRUSTED SOURCING',
+            'INTERNATIONAL TRADE',
+            'RELIABLE DELIVERY',
+          ]
 
     return {
       products,
       categories,
       categoryMeta,
       heroBanners,
+      marqueeTerms,
       bestSellers: getBestSellers(products),
       newArrivals: getNewArrivals(products),
       loading,
