@@ -128,7 +128,7 @@ export function FloatingNavbar({ activePage = 'home' }: { activePage?: NavPage }
     setQuery(product.title)
     setSearchOpen(false)
     setMenuOpen(false)
-    router.push(`/products/${product.slug}`)
+    router.push(`/${product.slug}`)
   }
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {

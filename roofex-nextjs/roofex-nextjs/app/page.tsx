@@ -141,7 +141,7 @@ function NewArrivals() {
               {slides.map((item, index) => (
                 <Link
                   key={`${item.slug}-${index}`}
-                  href={`/products/${item.slug}`}
+                  href={`/${item.slug}`}
                   className="newArrivalsSlide"
                   style={{ ['--slide-i' as string]: index }}
                 >

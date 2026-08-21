@@ -32,7 +32,7 @@ export function ProductCard({
   variant?: 'default' | 'showcase' | 'showcase-compact'
   priority?: boolean
 }) {
-  const detailHref = product.slug ? `/products/${product.slug}` : '/products'
+  const detailHref = product.slug ? `/${product.slug}` : '/products'
   const isShowcaseCompact = variant === 'showcase-compact'
   const isShowcase = variant === 'showcase' || isShowcaseCompact
   const showPrice = !product.hidePrice

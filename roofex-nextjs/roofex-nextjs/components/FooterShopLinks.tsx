@@ -17,7 +17,7 @@ export function FooterShopLinks() {
   const links =
     footerProducts.length > 0
       ? footerProducts.map((p) => ({
-          href: `/products/${p.slug}`,
+          href: `/${p.slug}`,
           label: p.title,
         }))
       : fallbackShopLinks.map((item) => ({ href: item.href, label: item.label }))

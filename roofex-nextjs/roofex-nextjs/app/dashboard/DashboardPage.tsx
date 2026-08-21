@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import type { HeroBanner, Product } from '@/lib/product-types'
 import { slugify, type CategoryMeta, type StoredCatalog } from '@/lib/catalog-utils'
 import { brand } from '@/lib/brand'
+import { productPath } from '@/lib/product-path'
 
 type Tab = 'products' | 'categories' | 'banners' | 'marquee'
 
@@ -14,6 +15,186 @@ const navItems: { id: Tab; label: string; hint: string }[] = [
   { id: 'banners', label: 'Hero Banners', hint: 'Homepage hero slides' },
   { id: 'marquee', label: 'Text Slider', hint: 'Homepage ticker after About' },
 ]
+
+function nextSku(products: Product[]): string {
+  let max = products.length
+  for (const product of products) {
+    const match = product.sku?.match(/(\d+)\s*$/)
+    if (match) max = Math.max(max, Number(match[1]))
+  }
+  return `DB-${String(max + 1).padStart(3, '0')}`
+}
+
+function fileLabel(url: string, fallback = 'Image'): string {
+  try {
+    const path = url.split('?')[0]
+    const name = path.split('/').pop() || fallback
+    return decodeURIComponent(name).slice(0, 48)
+  } catch {
+    return fallback
+  }
+}
+
+function ImagePickerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="8.5" cy="10" r="1.5" />
+      <path d="M21 16l-5.5-5.5L9 17" />
+    </svg>
+  )
+}
+
+type UploadKind = 'products' | 'categories' | 'banners'
+
+async function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = () => reject(new Error('Could not read file'))
+    reader.readAsDataURL(file)
+  })
+}
+
+async function uploadImageFile(file: File, kind: UploadKind = 'products'): Promise<string> {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('kind', kind)
+  try {
+    const res = await fetch('/api/upload', { method: 'POST', body: form })
+    if (res.ok) {
+      const data = (await res.json()) as { url?: string; secure_url?: string }
+      const url = data.url || data.secure_url
+      if (url) return url
+    }
+  } catch {
+    // fall through to local preview
+  }
+  return readFileAsDataUrl(file)
+}
+
+function DashboardImageField({
+  title,
+  value,
+  label,
+  kind = 'products',
+  multiple = false,
+  values = [],
+  onChange,
+  onAddMany,
+  onRemove,
+  busy = false,
+}: {
+  title: string
+  value?: string
+  label?: string
+  kind?: UploadKind
+  multiple?: boolean
+  values?: string[]
+  onChange?: (url: string, label?: string) => void
+  onAddMany?: (items: { url: string; label: string }[]) => void
+  onRemove?: (url: string) => void
+  busy?: boolean
+}) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [urlDraft, setUrlDraft] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const isBusy = busy || uploading
+
+  const applyUrl = () => {
+    const url = urlDraft.trim()
+    if (!url) return
+    if (multiple && onAddMany) {
+      onAddMany([{ url, label: fileLabel(url) }])
+    } else if (onChange) {
+      onChange(url, fileLabel(url))
+    }
+    setUrlDraft('')
+  }
+
+  const onFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
+    e.target.value = ''
+    if (!files.length) return
+    setUploading(true)
+    try {
+      if (multiple && onAddMany) {
+        const items: { url: string; label: string }[] = []
+        for (const file of files) {
+          const url = await uploadImageFile(file, kind)
+          items.push({ url, label: file.name })
+        }
+        onAddMany(items)
+      } else if (onChange && files[0]) {
+        const url = await uploadImageFile(files[0], kind)
+        onChange(url, files[0].name)
+      }
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const previews = multiple
+    ? values
+    : value
+      ? [value]
+      : []
+
+  return (
+    <div className="dashboardImageBlock">
+      <span className="dashboardImageBlockTitle">{title}</span>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        multiple={multiple}
+        className="dashboardImageInput"
+        onChange={onFileChange}
+      />
+
+      <div className="dashboardImageActions">
+        <button
+          type="button"
+          className="dashboardImagePick dashboardImagePick--compact"
+          onClick={() => fileRef.current?.click()}
+          disabled={isBusy}
+        >
+          <ImagePickerIcon />
+          <span>{isBusy ? 'Uploading…' : multiple ? 'Choose local images' : 'Choose local image'}</span>
+        </button>
+        <div className="dashboardImageUrlRow">
+          <input
+            type="url"
+            value={urlDraft}
+            onChange={(e) => setUrlDraft(e.target.value)}
+            placeholder="Or paste image URL (https://...)"
+          />
+          <button type="button" className="btnOrange dashboardImageUrlBtn" onClick={applyUrl} disabled={!urlDraft.trim()}>
+            Add URL
+          </button>
+        </div>
+      </div>
+
+      {previews.length > 0 ? (
+        <div className="dashboardImageGallery">
+          {previews.map((url) => (
+            <div key={url} className="dashboardImageThumb">
+              <img src={url} alt={label || fileLabel(url)} />
+              <div className="dashboardImageMeta">
+                <strong>{label && !multiple ? label : fileLabel(url)}</strong>
+                {onRemove ? (
+                  <button type="button" className="danger" onClick={() => onRemove(url)}>
+                    Remove
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
 
 const emptyProduct = (): Product => ({
   id: '',
@@ -69,6 +250,8 @@ export default function DashboardPage() {
   const [isNewBanner, setIsNewBanner] = useState(false)
   const [bannerEditId, setBannerEditId] = useState('')
   const [marqueeDraft, setMarqueeDraft] = useState('')
+  const [imageLabels, setImageLabels] = useState<Record<string, string>>({})
+  const [slugLocked, setSlugLocked] = useState(false)
 
   const loadCatalog = useCallback(async () => {
     setLoading(true)
@@ -121,13 +304,88 @@ export default function DashboardPage() {
   const openNewProduct = () => {
     const draft = emptyProduct()
     draft.category = categoryTitles[0] ?? ''
+    draft.sku = nextSku(catalog?.products ?? [])
     setEditingProduct(draft)
     setIsNewProduct(true)
+    setSlugLocked(false)
+    setImageLabels({})
   }
 
   const openEditProduct = (product: Product) => {
-    setEditingProduct({ ...product, images: [...(product.images ?? [product.img])] })
+    setEditingProduct({ ...product, images: [...(product.images ?? [product.img]).filter(Boolean)] })
     setIsNewProduct(false)
+    setSlugLocked(true)
+    const labels: Record<string, string> = {}
+    if (product.img) labels[product.img] = fileLabel(product.img, 'Main image')
+    for (const url of product.images ?? []) {
+      if (url) labels[url] = fileLabel(url)
+    }
+    setImageLabels(labels)
+  }
+
+  const updateProductTitle = (title: string) => {
+    if (!editingProduct) return
+    const nextSlug = slugLocked && editingProduct.slug ? editingProduct.slug : slugify(title)
+    setEditingProduct({
+      ...editingProduct,
+      title,
+      slug: nextSlug,
+    })
+  }
+
+  const updateProductSlug = (slug: string) => {
+    if (!editingProduct) return
+    setSlugLocked(true)
+    setEditingProduct({ ...editingProduct, slug: slugify(slug) || slug })
+  }
+
+  const rememberLabel = (url: string, name: string) => {
+    setImageLabels((prev) => ({ ...prev, [url]: name }))
+  }
+
+  const setMainImage = (url: string, label?: string) => {
+    if (!editingProduct) return
+    if (label) rememberLabel(url, label)
+    else rememberLabel(url, fileLabel(url, 'Main image'))
+    const extras = editingProduct.images.filter((img) => img && img !== editingProduct.img && img !== url)
+    setEditingProduct({
+      ...editingProduct,
+      img: url,
+      images: [url, ...extras],
+    })
+  }
+
+  const addExtraImages = (items: { url: string; label: string }[]) => {
+    if (!editingProduct) return
+    const main = editingProduct.img
+    const existing = editingProduct.images.filter((img) => img && img !== main)
+    const merged = [...existing]
+    for (const item of items) {
+      rememberLabel(item.url, item.label)
+      if (!merged.includes(item.url) && item.url !== main) merged.push(item.url)
+    }
+    setEditingProduct({
+      ...editingProduct,
+      images: main ? [main, ...merged] : merged,
+    })
+  }
+
+  const removeExtraImage = (url: string) => {
+    if (!editingProduct) return
+    setEditingProduct({
+      ...editingProduct,
+      images: editingProduct.images.filter((img) => img !== url),
+    })
+  }
+
+  const clearMainImage = () => {
+    if (!editingProduct) return
+    const extras = editingProduct.images.filter((img) => img && img !== editingProduct.img)
+    setEditingProduct({
+      ...editingProduct,
+      img: '',
+      images: extras,
+    })
   }
 
   const submitProduct = async () => {
@@ -136,14 +394,25 @@ export default function DashboardPage() {
     if (!title) return
 
     const slug = editingProduct.slug.trim() || slugify(title)
-    const id = editingProduct.id || `rx-${slug}`
+    if (!slug) {
+      setMessage('Add a title so the product URL/slug can be created.')
+      return
+    }
     const img = editingProduct.img.trim()
+    if (!img) {
+      setMessage('Please add a main product image.')
+      return
+    }
+
+    const id = editingProduct.id || `rx-${slug}`
     const images = editingProduct.images.filter(Boolean)
+    const sku = editingProduct.sku.trim() || nextSku(catalog.products)
     const nextProduct: Product = {
       ...editingProduct,
       id,
       slug,
       title,
+      sku,
       img: img || images[0] || '',
       images: images.length ? images : img ? [img] : [],
       features: editingProduct.features.filter(Boolean),
@@ -187,6 +456,10 @@ export default function DashboardPage() {
     if (!catalog || !editingCategory) return
     const title = editingCategory.title.trim()
     if (!title) return
+    if (!editingCategory.img.trim()) {
+      setMessage('Please add a category image (local file or URL).')
+      return
+    }
 
     const slug = editingCategory.slug.trim() || slugify(title)
     const nextCategory: CategoryMeta = { ...editingCategory, title, slug }
@@ -223,7 +496,10 @@ export default function DashboardPage() {
   const submitBanner = async () => {
     if (!catalog || !editingBanner) return
     const image = editingBanner.image.trim()
-    if (!image) return
+    if (!image) {
+      setMessage('Please add a banner image (local file or URL).')
+      return
+    }
 
     const id = editingBanner.id.trim() || `banner-${slugify(editingBanner.alt || 'slide')}`
     const nextBanner: HeroBanner = {
@@ -498,25 +774,124 @@ export default function DashboardPage() {
                 }}
               >
                 <div className="dashboardFormRow">
-                  <label>Title<input value={editingProduct.title} onChange={(e) => setEditingProduct({ ...editingProduct, title: e.target.value })} required /></label>
-                  <label>Slug<input value={editingProduct.slug} onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value })} placeholder="auto-from-title" /></label>
+                  <label>
+                    Title
+                    <input
+                      value={editingProduct.title}
+                      onChange={(e) => updateProductTitle(e.target.value)}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Slug
+                    <input
+                      value={editingProduct.slug}
+                      onChange={(e) => updateProductSlug(e.target.value)}
+                      placeholder="auto-from-title"
+                    />
+                    {editingProduct.slug ? (
+                      <span className="dashboardFieldHint">URL: {productPath(editingProduct.slug)}</span>
+                    ) : null}
+                  </label>
                 </div>
                 <div className="dashboardFormRow">
-                  <label>Price<input value={editingProduct.price} onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })} required={!editingProduct.hidePrice} disabled={!!editingProduct.hidePrice} /></label>
-                  <label>Category
-                    <select value={editingProduct.category} onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })} required>
-                      {categoryTitles.map((title) => <option key={title} value={title}>{title}</option>)}
+                  <label>
+                    Price
+                    <input
+                      value={editingProduct.price}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })}
+                      required={!editingProduct.hidePrice}
+                      disabled={!!editingProduct.hidePrice}
+                    />
+                  </label>
+                  <label>
+                    Category
+                    <select
+                      value={editingProduct.category}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
+                      required
+                    >
+                      {categoryTitles.map((title) => (
+                        <option key={title} value={title}>
+                          {title}
+                        </option>
+                      ))}
                     </select>
                   </label>
                 </div>
-                <label>Main image URL<input value={editingProduct.img} onChange={(e) => setEditingProduct({ ...editingProduct, img: e.target.value })} required /></label>
-                <label>Gallery URLs (comma separated)<input value={editingProduct.images.join(', ')} onChange={(e) => setEditingProduct({ ...editingProduct, images: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} /></label>
-                <label>Short description<textarea rows={2} value={editingProduct.shortDescription} onChange={(e) => setEditingProduct({ ...editingProduct, shortDescription: e.target.value })} required /></label>
-                <label>Full description<textarea rows={4} value={editingProduct.description} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} required /></label>
-                <label>Features (comma separated)<input value={editingProduct.features.join(', ')} onChange={(e) => setEditingProduct({ ...editingProduct, features: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} /></label>
+
+                <div className="dashboardImageSection">
+                  <DashboardImageField
+                    title="Main image"
+                    kind="products"
+                    value={editingProduct.img}
+                    label={imageLabels[editingProduct.img] || fileLabel(editingProduct.img, 'Main image')}
+                    onChange={setMainImage}
+                    onRemove={clearMainImage}
+                  />
+                  <DashboardImageField
+                    title="Extra images"
+                    kind="products"
+                    multiple
+                    values={editingProduct.images.filter((url) => url && url !== editingProduct.img)}
+                    onAddMany={addExtraImages}
+                    onRemove={removeExtraImage}
+                  />
+                </div>
+
+                <label>
+                  Short description
+                  <textarea
+                    rows={2}
+                    value={editingProduct.shortDescription}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, shortDescription: e.target.value })}
+                    required
+                  />
+                </label>
+                <label>
+                  Full description
+                  <textarea
+                    rows={4}
+                    value={editingProduct.description}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                    required
+                  />
+                </label>
+                <label>
+                  Features (comma separated)
+                  <input
+                    value={editingProduct.features.join(', ')}
+                    onChange={(e) =>
+                      setEditingProduct({
+                        ...editingProduct,
+                        features: e.target.value
+                          .split(',')
+                          .map((s) => s.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                  />
+                </label>
                 <div className="dashboardFormRow">
-                  <label>SKU<input value={editingProduct.sku} onChange={(e) => setEditingProduct({ ...editingProduct, sku: e.target.value })} /></label>
-                  <label>Rating<input value={editingProduct.rating} onChange={(e) => setEditingProduct({ ...editingProduct, rating: e.target.value })} /></label>
+                  <label>
+                    SKU
+                    <input
+                      value={editingProduct.sku}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, sku: e.target.value })}
+                      readOnly={isNewProduct}
+                      title={isNewProduct ? 'Auto-assigned from product count' : undefined}
+                    />
+                    {isNewProduct ? (
+                      <span className="dashboardFieldHint">Auto from product list count</span>
+                    ) : null}
+                  </label>
+                  <label>
+                    Rating
+                    <input
+                      value={editingProduct.rating}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, rating: e.target.value })}
+                    />
+                  </label>
                 </div>
 
                 <div className="dashboardCheckboxes">
@@ -571,9 +946,18 @@ export default function DashboardPage() {
                   submitCategory()
                 }}
               >
-                <label>Title<input value={editingCategory.title} onChange={(e) => setEditingCategory({ ...editingCategory, title: e.target.value })} required /></label>
+                <label>Title<input value={editingCategory.title} onChange={(e) => setEditingCategory({ ...editingCategory, title: e.target.value, slug: isNewCategory ? slugify(e.target.value) : editingCategory.slug })} required /></label>
                 <label>Slug<input value={editingCategory.slug} onChange={(e) => setEditingCategory({ ...editingCategory, slug: e.target.value })} placeholder="auto-from-title" /></label>
-                <label>Image URL<input value={editingCategory.img} onChange={(e) => setEditingCategory({ ...editingCategory, img: e.target.value })} required /></label>
+                <div className="dashboardImageSection">
+                  <DashboardImageField
+                    title="Category image"
+                    kind="categories"
+                    value={editingCategory.img}
+                    label={fileLabel(editingCategory.img, 'Category image')}
+                    onChange={(url) => setEditingCategory({ ...editingCategory, img: url })}
+                    onRemove={() => setEditingCategory({ ...editingCategory, img: '' })}
+                  />
+                </div>
                 <label>Description<textarea rows={3} value={editingCategory.description} onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })} required /></label>
                 <label>Card size
                   <select value={editingCategory.size} onChange={(e) => setEditingCategory({ ...editingCategory, size: e.target.value as CategoryMeta['size'] })}>
@@ -601,7 +985,16 @@ export default function DashboardPage() {
                   submitBanner()
                 }}
               >
-                <label>Image URL<input value={editingBanner.image} onChange={(e) => setEditingBanner({ ...editingBanner, image: e.target.value })} required placeholder="https://..." /></label>
+                <div className="dashboardImageSection">
+                  <DashboardImageField
+                    title="Banner image"
+                    kind="banners"
+                    value={editingBanner.image}
+                    label={fileLabel(editingBanner.image, 'Banner image')}
+                    onChange={(url) => setEditingBanner({ ...editingBanner, image: url })}
+                    onRemove={() => setEditingBanner({ ...editingBanner, image: '' })}
+                  />
+                </div>
                 <label>Alt text / label<input value={editingBanner.alt} onChange={(e) => setEditingBanner({ ...editingBanner, alt: e.target.value })} placeholder="Featured product collection" /></label>
                 <div className="dashboardFormRow">
                   <label>Sort order<input type="number" min={0} value={editingBanner.sortOrder} onChange={(e) => setEditingBanner({ ...editingBanner, sortOrder: Number(e.target.value) })} /></label>
@@ -610,11 +1003,6 @@ export default function DashboardPage() {
                     Show on homepage hero
                   </label>
                 </div>
-                {editingBanner.image ? (
-                  <div className="dashboardBannerModalPreview">
-                    <img src={editingBanner.image} alt={editingBanner.alt || 'Banner preview'} />
-                  </div>
-                ) : null}
                 <div className="dashboardModalActions">
                   <button type="button" className="btn btnDark" onClick={() => setEditingBanner(null)}>Cancel</button>
                   <button type="submit" className="btnOrange" disabled={saving}>{saving ? 'Saving…' : 'Save Banner'}</button>
