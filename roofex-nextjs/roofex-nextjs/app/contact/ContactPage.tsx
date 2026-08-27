@@ -73,10 +73,18 @@ export default function ContactPage() {
   const searchParams = useSearchParams()
   const productName = searchParams.get('product')?.trim() ?? ''
   const enquiryQty = searchParams.get('qty')?.trim() ?? ''
+  const enquiryType = searchParams.get('type')?.trim() ?? ''
+  const isOrderOnDemand = enquiryType === 'order-on-demand'
   const isProductEnquiry = productName.length > 0
-  const enquirySubject = isProductEnquiry ? `Product enquiry: ${productName}` : ''
+  const enquirySubject = isProductEnquiry
+    ? isOrderOnDemand
+      ? `Order on Demand: ${productName}`
+      : `Product enquiry: ${productName}`
+    : ''
   const enquiryMessage = isProductEnquiry
-    ? `Hello, I would like to enquire about ${productName}${enquiryQty ? ` (quantity: ${enquiryQty})` : ''}. Please share availability and pricing details.`
+    ? isOrderOnDemand
+      ? `Hello, I would like to place an Order on Demand for ${productName}${enquiryQty ? ` (quantity: ${enquiryQty})` : ''}. Please confirm lead time, availability, and pricing.`
+      : `Hello, I would like to enquire about ${productName}${enquiryQty ? ` (quantity: ${enquiryQty})` : ''}. Please share availability and pricing details.`
     : ''
 
   useEffect(() => {
@@ -132,10 +140,15 @@ export default function ContactPage() {
             <div className="contactFormLayout">
               <Reveal className="contactFormCard">
                 {isProductEnquiry && (
-                  <div className="contactEnquiryBanner">
-                    <span className="contactEnquiryBannerLabel">Product enquiry</span>
+                  <div className={`contactEnquiryBanner${isOrderOnDemand ? ' contactEnquiryBanner--demand' : ''}`}>
+                    <span className="contactEnquiryBannerLabel">
+                      {isOrderOnDemand ? 'Order on Demand' : 'Product enquiry'}
+                    </span>
                     <strong>{productName}</strong>
                     {enquiryQty ? <span>Quantity: {enquiryQty}</span> : null}
+                    {isOrderOnDemand ? (
+                      <span>Subject is set for Order on Demand — ready for customer enquiry / email handling later.</span>
+                    ) : null}
                   </div>
                 )}
 
@@ -162,6 +175,7 @@ export default function ContactPage() {
                       <select id="subject" name="subject" defaultValue="general">
                         <option value="general">General Inquiry</option>
                         <option value="product">Product Enquiry</option>
+                        <option value="order-on-demand">Order on Demand</option>
                         <option value="bulk">Bulk / Corporate Order</option>
                         <option value="order">Order Status</option>
                         <option value="business">Business & Partnerships</option>
@@ -169,7 +183,14 @@ export default function ContactPage() {
                     </div>
                   )}
                   {isProductEnquiry && (
-                    <input id="subject" type="hidden" name="subject" value={enquirySubject} />
+                    <>
+                      <input id="subject" type="hidden" name="subject" value={enquirySubject} />
+                      <input type="hidden" name="enquiryType" value={isOrderOnDemand ? 'order-on-demand' : 'product'} />
+                      <div className="formGroup">
+                        <label htmlFor="subjectVisible">Subject</label>
+                        <input id="subjectVisible" type="text" value={enquirySubject} readOnly />
+                      </div>
+                    </>
                   )}
                   <div className="formGroup formGroupFull">
                     <label htmlFor="message">Message</label>
@@ -182,7 +203,9 @@ export default function ContactPage() {
                       required
                     />
                   </div>
-                  <button type="submit" className="btnSubmit contactFormSubmit">Send Enquiry</button>
+                  <button type="submit" className="btnSubmit contactFormSubmit">
+                    {isOrderOnDemand ? 'Submit Order on Demand' : 'Send Enquiry'}
+                  </button>
                 </form>
               </Reveal>
 

@@ -6,6 +6,7 @@ import { CATALOG_VERSION, getDemoCatalog } from './demo-catalog'
 import {
   buildCategories,
   normalizeProduct,
+  slugify,
   type StoredCatalog,
 } from './catalog-utils'
 import type { Category, Product } from './product-types'
@@ -36,7 +37,17 @@ function needsReseed(data: StoredCatalog): boolean {
 function normalizeCatalog(data: StoredCatalog): StoredCatalog {
   const seed = getSeedCatalog()
   const products = Array.isArray(data.products) ? data.products : seed.products
-  const categories = Array.isArray(data.categories) ? data.categories : seed.categories
+  const categories = (Array.isArray(data.categories) ? data.categories : seed.categories).map((cat) => ({
+    ...cat,
+    subcategories: Array.isArray(cat.subcategories)
+      ? cat.subcategories
+          .map((s) => ({
+            title: String(s.title || '').trim(),
+            slug: String(s.slug || '').trim() || slugify(String(s.title || '')),
+          }))
+          .filter((s) => s.title)
+      : [],
+  }))
   return {
     version: data.version ?? CATALOG_VERSION,
     products: products.map(normalizeProduct),

@@ -36,6 +36,8 @@ export function normalizeProduct(product: Product): Product {
     ...product,
     img,
     images,
+    moq: typeof product.moq === 'number' && product.moq > 0 ? Math.floor(product.moq) : undefined,
+    subcategory: product.subcategory?.trim() || undefined,
     isBestSeller:
       product.isBestSeller ??
       ['Best Seller', 'Top Rated'].includes(product.badge ?? ''),

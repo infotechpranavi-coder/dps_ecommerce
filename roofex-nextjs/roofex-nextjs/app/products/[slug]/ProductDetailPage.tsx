@@ -16,10 +16,14 @@ export default function ProductDetailPage({ product }: { product: Product }) {
   const router = useRouter()
   const { products, categories } = useCatalog()
   const [activeImage, setActiveImage] = useState(0)
-  const [quantity, setQuantity] = useState(1)
+  const minQty = Math.max(1, Math.floor(product.moq || 1))
+  const [quantity, setQuantity] = useState(minQty)
   const [wishlistSlugs, setWishlistSlugs] = useState<string[]>([])
-
-  const enquireHref = `/contact?product=${encodeURIComponent(product.title)}&qty=${quantity}#contact-form`
+  const isOutOfStock = product.inStock === false
+  const ctaLabel = isOutOfStock ? 'Order on Demand' : 'Enquire'
+  const enquireHref = isOutOfStock
+    ? `/contact?product=${encodeURIComponent(product.title)}&qty=${quantity}&type=order-on-demand#contact-form`
+    : `/contact?product=${encodeURIComponent(product.title)}&qty=${quantity}#contact-form`
 
   const handleEnquire = () => {
     router.push(enquireHref)
@@ -41,17 +45,19 @@ export default function ProductDetailPage({ product }: { product: Product }) {
 
   const specRows = [
     { label: 'Category', value: product.category },
+    product.subcategory ? { label: 'Sub-category', value: product.subcategory } : null,
     { label: 'SKU', value: product.sku },
+    { label: 'MOQ', value: `${minQty} unit${minQty === 1 ? '' : 's'} minimum` },
     product.material ? { label: 'Material', value: product.material } : null,
     product.dimensions ? { label: 'Size', value: product.dimensions } : null,
     product.warranty ? { label: 'Warranty', value: product.warranty } : null,
     {
       label: 'Availability',
-      value: product.inStock
-        ? product.stockCount != null
+      value: isOutOfStock
+        ? 'Out of stock — order on demand'
+        : product.stockCount != null
           ? `${product.stockCount} units in stock`
-          : 'In stock — ready to supply'
-        : 'Out of stock',
+          : 'In stock — ready to supply',
     },
     { label: 'Rating', value: `${product.rating} · ${product.reviewCount} reviews` },
   ].filter(Boolean) as { label: string; value: string }[]
@@ -96,6 +102,7 @@ export default function ProductDetailPage({ product }: { product: Product }) {
               <Reveal className={`productDetailInfoIntro${!product.hidePrice ? '' : ' productDetailInfoIntro--compact'}`} delay={0.06}>
                 <Link href={categoryHref} className="productDetailEyebrow">
                   {product.category}
+                  {product.subcategory ? ` · ${product.subcategory}` : ''}
                 </Link>
                 <h1 className="productDetailTitle">{product.title}</h1>
                 <p className="productDetailShort">{product.shortDescription}</p>
@@ -106,7 +113,13 @@ export default function ProductDetailPage({ product }: { product: Product }) {
                       <strong><PriceDisplay value={product.price} as="span" /></strong>
                       {product.compareAt && <s><PriceDisplay value={product.compareAt} as="span" /></s>}
                     </div>
-                    {product.isLimited && product.stockCount && (
+                    {minQty > 1 ? (
+                      <span className="productDetailMoq">Min. order quantity: {minQty}</span>
+                    ) : null}
+                    {isOutOfStock ? (
+                      <span className="productDetailOos">Out of stock — available on demand</span>
+                    ) : null}
+                    {product.isLimited && product.stockCount && !isOutOfStock && (
                       <span className="productDetailLimited">Only {product.stockCount} left in stock</span>
                     )}
                   </div>
@@ -114,7 +127,13 @@ export default function ProductDetailPage({ product }: { product: Product }) {
                   <div className="productDetailEnquireNote">
                     <strong>Price on enquiry</strong>
                     <span>Share quantity below and our team will confirm pricing.</span>
-                    {product.isLimited && product.stockCount ? (
+                    {minQty > 1 ? (
+                      <span className="productDetailMoq">Min. order quantity: {minQty}</span>
+                    ) : null}
+                    {isOutOfStock ? (
+                      <span className="productDetailOos">Out of stock — available on demand</span>
+                    ) : null}
+                    {product.isLimited && product.stockCount && !isOutOfStock ? (
                       <span className="productDetailLimited">Only {product.stockCount} left in stock</span>
                     ) : null}
                   </div>
@@ -122,18 +141,33 @@ export default function ProductDetailPage({ product }: { product: Product }) {
 
                 <div className="productDetailActions">
                   <div className="productDetailQty">
-                    <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity">−</button>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(Math.max(minQty, quantity - 1))}
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
                     <span>{quantity}</span>
                     <button type="button" onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity">+</button>
                   </div>
                   <button
                     type="button"
-                    className="btnOrange productDetailAdd"
+                    className={`btnOrange productDetailAdd${isOutOfStock ? ' productDetailAdd--demand' : ''}`}
                     onClick={handleEnquire}
                   >
-                    Enquire
+                    {ctaLabel}
                   </button>
                 </div>
+                {isOutOfStock ? (
+                  <p className="productDetailMoqHint">
+                    This item is currently out of stock. Use Order on Demand and we will confirm lead time and pricing.
+                  </p>
+                ) : minQty > 1 ? (
+                  <p className="productDetailMoqHint">
+                    This product requires a minimum order of {minQty} units.
+                  </p>
+                ) : null}
               </Reveal>
 
               <Reveal className="productDetailTrustWrap" delay={0.12}>

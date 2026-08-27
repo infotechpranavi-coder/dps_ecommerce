@@ -12,7 +12,7 @@ import { HomeStatsSection } from '@/components/home/HomeStatsSection'
 import { SkillsSection } from '@/components/home/SkillsSection'
 import { SteelMarqueeSection } from '@/components/home/SteelMarqueeSection'
 // import { MarketSectorsSection } from '@/components/home/MarketSectorsSection'
-import { ProductsSection, PartnersSection } from '@/components/home/ProductsSection'
+import { ProductsSection } from '@/components/home/ProductsSection'
 import { ClientSaySection } from '@/components/home/ClientSaySection'
 import { useCatalog } from '@/components/CatalogProvider'
 import { AwardIcon, ShieldIcon, WrenchIcon } from '@/components/Icons'
@@ -184,7 +184,6 @@ export default function HomePage() {
         <SkillsSection />
         <SteelMarqueeSection />
         <Benefits />
-        <PartnersSection />
         <ClientSaySection />
       </main>
       <Footer />

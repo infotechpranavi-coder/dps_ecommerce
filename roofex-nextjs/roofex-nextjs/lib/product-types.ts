@@ -1,3 +1,8 @@
+export type SubCategory = {
+  title: string
+  slug: string
+}
+
 export type Product = {
   id: string
   slug: string
@@ -7,6 +12,8 @@ export type Product = {
   img: string
   images: string[]
   category: string
+  /** Sub-category title under the parent category */
+  subcategory?: string
   badge?: string
   compareAt?: string
   shortDescription: string
@@ -19,6 +26,8 @@ export type Product = {
   inStock: boolean
   stockCount?: number
   warranty?: string
+  /** Minimum order quantity required to purchase / enquire */
+  moq?: number
   isNew?: boolean
   isBestSeller?: boolean
   isLimited?: boolean
@@ -35,6 +44,7 @@ export type Category = {
   img: string
   size: 'large' | 'medium' | 'wide'
   description: string
+  subcategories?: SubCategory[]
 }
 
 export type LimitedProduct = {

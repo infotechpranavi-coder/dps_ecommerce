@@ -216,6 +216,8 @@ const emptyProduct = (): Product => ({
   isLimited: false,
   showInFooter: false,
   hidePrice: false,
+  moq: 1,
+  subcategory: '',
 })
 
 const emptyCategory = (): CategoryMeta => ({
@@ -224,6 +226,7 @@ const emptyCategory = (): CategoryMeta => ({
   img: '',
   size: 'medium',
   description: '',
+  subcategories: [],
 })
 
 const emptyBanner = (): HeroBanner => ({
@@ -252,6 +255,7 @@ export default function DashboardPage() {
   const [marqueeDraft, setMarqueeDraft] = useState('')
   const [imageLabels, setImageLabels] = useState<Record<string, string>>({})
   const [slugLocked, setSlugLocked] = useState(false)
+  const [subcategoryDraft, setSubcategoryDraft] = useState('')
 
   const loadCatalog = useCallback(async () => {
     setLoading(true)
@@ -413,6 +417,8 @@ export default function DashboardPage() {
       slug,
       title,
       sku,
+      moq: Math.max(1, Math.floor(Number(editingProduct.moq) || 1)),
+      subcategory: editingProduct.subcategory?.trim() || undefined,
       img: img || images[0] || '',
       images: images.length ? images : img ? [img] : [],
       features: editingProduct.features.filter(Boolean),
@@ -444,12 +450,42 @@ export default function DashboardPage() {
   const openNewCategory = () => {
     setEditingCategory(emptyCategory())
     setIsNewCategory(true)
+    setSubcategoryDraft('')
   }
 
   const openEditCategory = (category: CategoryMeta) => {
-    setEditingCategory({ ...category })
+    setEditingCategory({
+      ...category,
+      subcategories: [...(category.subcategories ?? [])],
+    })
     setCategoryEditSlug(category.slug)
     setIsNewCategory(false)
+    setSubcategoryDraft('')
+  }
+
+  const addSubcategoryToDraft = () => {
+    if (!editingCategory) return
+    const title = subcategoryDraft.trim()
+    if (!title) return
+    const slug = slugify(title)
+    const existing = editingCategory.subcategories ?? []
+    if (existing.some((s) => s.slug === slug || s.title.toLowerCase() === title.toLowerCase())) {
+      setMessage('That sub-category already exists.')
+      return
+    }
+    setEditingCategory({
+      ...editingCategory,
+      subcategories: [...existing, { title, slug }],
+    })
+    setSubcategoryDraft('')
+  }
+
+  const removeSubcategoryFromDraft = (slug: string) => {
+    if (!editingCategory) return
+    setEditingCategory({
+      ...editingCategory,
+      subcategories: (editingCategory.subcategories ?? []).filter((s) => s.slug !== slug),
+    })
   }
 
   const submitCategory = async () => {
@@ -462,7 +498,13 @@ export default function DashboardPage() {
     }
 
     const slug = editingCategory.slug.trim() || slugify(title)
-    const nextCategory: CategoryMeta = { ...editingCategory, title, slug }
+    const subcategories = (editingCategory.subcategories ?? [])
+      .map((s) => ({
+        title: s.title.trim(),
+        slug: s.slug.trim() || slugify(s.title),
+      }))
+      .filter((s) => s.title)
+    const nextCategory: CategoryMeta = { ...editingCategory, title, slug, subcategories }
 
     const categories = isNewCategory
       ? [...catalog.categories, nextCategory]
@@ -536,6 +578,16 @@ export default function DashboardPage() {
     })
   }
 
+  const toggleProductInStock = async (id: string, inStock: boolean) => {
+    if (!catalog) return
+    await saveCatalog({
+      ...catalog,
+      products: catalog.products.map((product) =>
+        product.id === id ? { ...product, inStock } : product,
+      ),
+    })
+  }
+
   const saveMarqueeTerms = async () => {
     if (!catalog) return
     const marqueeTerms = marqueeDraft
@@ -566,22 +618,43 @@ export default function DashboardPage() {
                 <tr>
                   <th>Product</th>
                   <th>Category</th>
+                  <th>MOQ</th>
                   <th>Price</th>
+                  <th>In stock</th>
                   <th>Flags</th>
                   <th aria-label="Actions" />
                 </tr>
               </thead>
               <tbody>
                 {catalog.products.map((product) => (
-                  <tr key={product.id}>
+                  <tr key={product.id} className={product.inStock === false ? 'dashboardRow--oos' : undefined}>
                     <td>
                       <div className="dashboardProductCell">
                         {product.img ? <img src={product.img} alt="" /> : null}
                         <span>{product.title}</span>
                       </div>
                     </td>
-                    <td>{product.category}</td>
+                    <td>
+                      <div className="dashboardCategoryCell">
+                        <span>{product.category}</span>
+                        {product.subcategory ? (
+                          <small>{product.subcategory}</small>
+                        ) : null}
+                      </div>
+                    </td>
+                    <td>{product.moq && product.moq > 1 ? product.moq : '1'}</td>
                     <td>{product.hidePrice ? 'Hidden' : product.price}</td>
+                    <td>
+                      <label className="dashboardStockToggle" title={product.inStock === false ? 'Mark in stock' : 'Mark out of stock'}>
+                        <input
+                          type="checkbox"
+                          checked={product.inStock !== false}
+                          disabled={saving}
+                          onChange={(e) => toggleProductInStock(product.id, e.target.checked)}
+                        />
+                        <span>{product.inStock === false ? 'Out of stock' : 'In stock'}</span>
+                      </label>
+                    </td>
                     <td>
                       <div className="dashboardFlags">
                         {product.isNew && <span className="dashboardFlag">New</span>}
@@ -589,6 +662,7 @@ export default function DashboardPage() {
                         {product.isLimited && <span className="dashboardFlag">Limited</span>}
                         {product.showInFooter && <span className="dashboardFlag">Footer</span>}
                         {product.hidePrice && <span className="dashboardFlag">No price</span>}
+                        {product.inStock === false && <span className="dashboardFlag dashboardFlag--oos">OOS</span>}
                       </div>
                     </td>
                     <td>
@@ -623,6 +697,15 @@ export default function DashboardPage() {
                 <div>
                   <h3>{category.title}</h3>
                   <p>{category.description}</p>
+                  {(category.subcategories?.length ?? 0) > 0 ? (
+                    <p className="dashboardSubcatHint">
+                      {category.subcategories!.length} sub-categor
+                      {category.subcategories!.length === 1 ? 'y' : 'ies'}:{' '}
+                      {category.subcategories!.map((s) => s.title).join(', ')}
+                    </p>
+                  ) : (
+                    <p className="dashboardSubcatHint">No sub-categories yet</p>
+                  )}
                   <div className="dashboardRowActions">
                     <button type="button" onClick={() => openEditCategory(category)}>Edit</button>
                     <button type="button" className="danger" onClick={() => deleteCategory(category.slug)}>Delete</button>
@@ -805,10 +888,34 @@ export default function DashboardPage() {
                     />
                   </label>
                   <label>
+                    MOQ (Min. order qty)
+                    <input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={editingProduct.moq ?? 1}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          moq: Math.max(1, Math.floor(Number(e.target.value) || 1)),
+                        })
+                      }
+                    />
+                    <span className="dashboardFieldHint">Minimum quantity that must be ordered</span>
+                  </label>
+                </div>
+                <div className="dashboardFormRow">
+                  <label>
                     Category
                     <select
                       value={editingProduct.category}
-                      onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          category: e.target.value,
+                          subcategory: '',
+                        })
+                      }
                       required
                     >
                       {categoryTitles.map((title) => (
@@ -817,6 +924,28 @@ export default function DashboardPage() {
                         </option>
                       ))}
                     </select>
+                  </label>
+                  <label>
+                    Sub-category
+                    <select
+                      value={editingProduct.subcategory || ''}
+                      onChange={(e) =>
+                        setEditingProduct({ ...editingProduct, subcategory: e.target.value })
+                      }
+                    >
+                      <option value="">None</option>
+                      {(
+                        catalog?.categories.find((c) => c.title === editingProduct.category)
+                          ?.subcategories ?? []
+                      ).map((sub) => (
+                        <option key={sub.slug} value={sub.title}>
+                          {sub.title}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="dashboardFieldHint">
+                      Add sub-categories under the Categories tab first
+                    </span>
                   </label>
                 </div>
 
@@ -915,6 +1044,14 @@ export default function DashboardPage() {
                   <label className="dashboardCheck">
                     <input
                       type="checkbox"
+                      checked={editingProduct.inStock !== false}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, inStock: e.target.checked })}
+                    />
+                    In stock (uncheck = out of stock → Order on Demand)
+                  </label>
+                  <label className="dashboardCheck">
+                    <input
+                      type="checkbox"
                       checked={!!editingProduct.hidePrice}
                       onChange={(e) => setEditingProduct({
                         ...editingProduct,
@@ -966,6 +1103,50 @@ export default function DashboardPage() {
                     <option value="wide">Wide</option>
                   </select>
                 </label>
+
+                <div className="dashboardSubcatSection">
+                  <span className="dashboardImageBlockTitle">Sub-categories</span>
+                  <p className="dashboardFieldHint">
+                    Add sub-groups under this category. Products can then pick a sub-category.
+                  </p>
+                  <div className="dashboardImageUrlRow">
+                    <input
+                      type="text"
+                      value={subcategoryDraft}
+                      onChange={(e) => setSubcategoryDraft(e.target.value)}
+                      placeholder="e.g. Export Pack / Retail Pack"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          addSubcategoryToDraft()
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="btnOrange dashboardImageUrlBtn"
+                      onClick={addSubcategoryToDraft}
+                      disabled={!subcategoryDraft.trim()}
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="dashboardSubcatList">
+                    {(editingCategory.subcategories ?? []).length === 0 ? (
+                      <span className="dashboardFieldHint">No sub-categories added yet.</span>
+                    ) : (
+                      (editingCategory.subcategories ?? []).map((sub) => (
+                        <div key={sub.slug} className="dashboardSubcatChip">
+                          <span>{sub.title}</span>
+                          <button type="button" className="danger" onClick={() => removeSubcategoryFromDraft(sub.slug)}>
+                            Remove
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
                 <div className="dashboardModalActions">
                   <button type="button" className="btn btnDark" onClick={() => setEditingCategory(null)}>Cancel</button>
                   <button type="submit" className="btnOrange" disabled={saving}>{saving ? 'Saving…' : 'Save Category'}</button>

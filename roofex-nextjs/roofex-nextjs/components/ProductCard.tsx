@@ -12,9 +12,12 @@ export type ProductCardData = {
   rating: string
   img: string
   category?: string
+  subcategory?: string
   badge?: string
   compareAt?: string
   hidePrice?: boolean
+  moq?: number
+  inStock?: boolean
 }
 
 export function ProductCard({
@@ -36,16 +39,26 @@ export function ProductCard({
   const isShowcaseCompact = variant === 'showcase-compact'
   const isShowcase = variant === 'showcase' || isShowcaseCompact
   const showPrice = !product.hidePrice
+  const moq = Math.max(1, Math.floor(product.moq || 1))
+  const isOutOfStock = product.inStock === false
+  const ctaLabel = isOutOfStock ? 'Order on Demand' : 'Enquire Now'
+  const categoryLabel = product.subcategory
+    ? `${product.category} · ${product.subcategory}`
+    : product.category
 
   return (
-    <article className={`productCard productsCatalogCard${isShowcase ? ' productCard--showcase' : ''}${isShowcaseCompact ? ' productCard--showcase-compact' : ''}${!showPrice ? ' productCard--noPrice' : ''}`}>
+    <article className={`productCard productsCatalogCard${isShowcase ? ' productCard--showcase' : ''}${isShowcaseCompact ? ' productCard--showcase-compact' : ''}${!showPrice ? ' productCard--noPrice' : ''}${isOutOfStock ? ' productCard--oos' : ''}`}>
       <Link
         href={detailHref}
         className="productCardStretched"
         aria-label={`View details for ${product.title}`}
       />
       <div className="productImgWrap">
-        {product.badge && <span className="productBadge">{product.badge}</span>}
+        {isOutOfStock ? (
+          <span className="productBadge productBadge--oos">Out of stock</span>
+        ) : product.badge ? (
+          <span className="productBadge">{product.badge}</span>
+        ) : null}
         <img
           src={product.img}
           alt={product.title}
@@ -91,14 +104,15 @@ export function ProductCard({
           </>
         ) : isShowcase ? (
           <>
-            {showCategory && product.category && (
-              <div className="productCategory">{product.category}</div>
+            {showCategory && categoryLabel && (
+              <div className="productCategory">{categoryLabel}</div>
             )}
             <h3>{product.title}</h3>
             <div className="productShowcaseRating">
               <span className="productShowcaseStars" aria-hidden>★★★★★</span>
-              <span>{product.rating} · In stock</span>
+              <span>{product.rating} · {isOutOfStock ? 'On demand' : 'In stock'}</span>
             </div>
+            {moq > 1 ? <span className="productMoqBadge">MOQ {moq}</span> : null}
             <div className="productShowcaseFooter">
               {showPrice ? (
                 <div className="productPriceWrap">
@@ -108,21 +122,22 @@ export function ProductCard({
               ) : (
                 <span className="productEnquireHint">Enquire for price</span>
               )}
-              <span className="productShowcaseBtn">
-                <CartIcon /> Enquire Now
+              <span className={`productShowcaseBtn${isOutOfStock ? ' productShowcaseBtn--demand' : ''}`}>
+                <CartIcon /> {ctaLabel}
               </span>
             </div>
           </>
         ) : (
           <>
-            {showCategory && product.category && (
-              <div className="productCategory">{product.category}</div>
+            {showCategory && categoryLabel && (
+              <div className="productCategory">{categoryLabel}</div>
             )}
             <div className="productMeta">
               <span>{product.rating} rating</span>
-              <span>In stock</span>
+              <span>{isOutOfStock ? 'On demand' : 'In stock'}</span>
             </div>
             <h3>{product.title}</h3>
+            {moq > 1 ? <span className="productMoqBadge">MOQ {moq}</span> : null}
             <div className="productBuyRow">
               {showPrice ? (
                 <div className="productPriceWrap">
@@ -132,7 +147,7 @@ export function ProductCard({
               ) : (
                 <span className="productEnquireHint">Enquire for price</span>
               )}
-              <span className="quickAdd"><CartIcon /> Enquire Now</span>
+              <span className={`quickAdd${isOutOfStock ? ' quickAdd--demand' : ''}`}><CartIcon /> {ctaLabel}</span>
             </div>
           </>
         )}

@@ -6696,6 +6696,15 @@ a {
   color: var(--color-text-muted);
 }
 
+.contactEnquiryBanner--demand {
+  background: linear-gradient(135deg, rgba(194, 65, 12, 0.12), rgba(194, 65, 12, 0.05));
+  border-color: rgba(194, 65, 12, 0.3);
+}
+
+.contactEnquiryBanner--demand .contactEnquiryBannerLabel {
+  color: #c2410c;
+}
+
 .contactFaqCta {
   margin-top: 24px;
 }
@@ -8173,6 +8182,57 @@ a {
   border-radius: 999px;
 }
 
+.productDetailMoq {
+  display: inline-block;
+  margin-top: 10px;
+  margin-right: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-navy);
+  background: rgba(232, 160, 32, 0.16);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.productDetailOos {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #9a3412;
+  background: rgba(234, 88, 12, 0.12);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.productDetailAdd--demand {
+  background: #c2410c;
+  border-color: #c2410c;
+}
+
+.productDetailAdd--demand:hover {
+  background: #9a3412;
+  border-color: #9a3412;
+}
+
+.productBadge--oos {
+  background: #9a3412;
+  color: #fff;
+}
+
+.productShowcaseBtn--demand,
+.quickAdd--demand {
+  background: #c2410c !important;
+  border-color: #c2410c !important;
+}
+
+.productDetailMoqHint {
+  margin: -6px 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
 .productDetailPanel {
   display: none;
 }
@@ -9212,6 +9272,32 @@ a.productsCategoryCard {
   color: var(--color-navy);
 }
 
+.dashboardFlag--oos {
+  background: rgba(154, 52, 18, 0.12);
+  color: #9a3412;
+}
+
+.dashboardStockToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-navy);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dashboardStockToggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-navy);
+}
+
+.dashboardRow--oos {
+  background: rgba(154, 52, 18, 0.04);
+}
+
 .dashboardRowActions {
   display: flex;
   gap: 8px;
@@ -9269,6 +9355,70 @@ a.productsCategoryCard {
   color: var(--color-text-muted);
   line-height: 1.5;
   margin-bottom: 12px;
+}
+
+.dashboardCategoryCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dashboardCategoryCell small {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.dashboardSubcatHint {
+  font-size: 12px !important;
+  color: var(--color-navy) !important;
+  margin-bottom: 10px !important;
+}
+
+.dashboardSubcatSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #f8f9fb;
+}
+
+.dashboardSubcatList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboardSubcatChip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+}
+
+.dashboardSubcatChip span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.productMoqBadge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin: 6px 0 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15, 30, 50, 0.08);
+  color: var(--color-navy);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .dashboardModalBackdrop {
