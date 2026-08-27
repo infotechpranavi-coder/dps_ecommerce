@@ -50,15 +50,16 @@ export function normalizeCatalog(data: StoredCatalog): StoredCatalog {
       : [],
   }))
   const banners = Array.isArray(data.banners) ? data.banners : seed.banners
+  const seedMarquee = seed.marqueeTerms ?? []
   const marqueeTerms = Array.isArray(data.marqueeTerms)
     ? data.marqueeTerms.map((term) => String(term).trim()).filter(Boolean)
-    : seed.marqueeTerms
+    : seedMarquee
   return {
     version: data.version ?? CATALOG_VERSION,
     products: products.map(normalizeProduct),
     categories,
     banners: banners.length ? banners : seed.banners,
-    marqueeTerms: marqueeTerms.length ? marqueeTerms : seed.marqueeTerms,
+    marqueeTerms: marqueeTerms.length ? marqueeTerms : seedMarquee,
   }
 }
 
