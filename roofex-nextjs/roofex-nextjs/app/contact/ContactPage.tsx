@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { FloatingNavbar } from '@/components/FloatingNavbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
+import { useCatalog } from '@/components/CatalogProvider'
 import { ChatIcon, ClockIcon, MailIcon, MapPinIcon, PhoneIcon } from '@/components/Icons'
 import { brand } from '@/lib/brand'
+import { ENQUIRY_TYPE_LABELS } from '@/lib/enquiry-types'
 
 const contactMethods = [
   {
@@ -71,11 +73,30 @@ const supportHours = [
 
 export default function ContactPage() {
   const searchParams = useSearchParams()
+  const { products } = useCatalog()
   const productName = searchParams.get('product')?.trim() ?? ''
-  const enquiryQty = searchParams.get('qty')?.trim() ?? ''
   const enquiryType = searchParams.get('type')?.trim() ?? ''
   const isOrderOnDemand = enquiryType === 'order-on-demand'
   const isProductEnquiry = productName.length > 0
+
+  const matchedProduct = isProductEnquiry
+    ? products.find((p) => p.title.toLowerCase() === productName.toLowerCase())
+    : undefined
+  const moqFromQuery = Number(searchParams.get('moq')?.trim() || '')
+  const productMoq = Math.max(
+    1,
+    Math.floor(
+      matchedProduct?.moq
+        || (Number.isFinite(moqFromQuery) && moqFromQuery > 0 ? moqFromQuery : 0)
+        || 1,
+    ),
+  )
+  const requestedQty = Number(searchParams.get('qty')?.trim() || '')
+  // Enquiry quantity is at least the product MOQ (falls back to MOQ when qty is missing).
+  const enquiryQty = Number.isFinite(requestedQty) && requestedQty > 0
+    ? Math.max(productMoq, Math.floor(requestedQty))
+    : productMoq
+
   const enquirySubject = isProductEnquiry
     ? isOrderOnDemand
       ? `Order on Demand: ${productName}`
@@ -83,9 +104,14 @@ export default function ContactPage() {
     : ''
   const enquiryMessage = isProductEnquiry
     ? isOrderOnDemand
-      ? `Hello, I would like to place an Order on Demand for ${productName}${enquiryQty ? ` (quantity: ${enquiryQty})` : ''}. Please confirm lead time, availability, and pricing.`
-      : `Hello, I would like to enquire about ${productName}${enquiryQty ? ` (quantity: ${enquiryQty})` : ''}. Please share availability and pricing details.`
+      ? `Hello, I would like to place an Order on Demand for ${productName} (quantity: ${enquiryQty}, MOQ: ${productMoq}). Please confirm lead time, availability, and pricing.`
+      : `Hello, I would like to enquire about ${productName} (quantity: ${enquiryQty}, MOQ: ${productMoq}). Please share availability and pricing details.`
     : ''
+
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
     if (isProductEnquiry && window.location.hash === '#contact-form') {
@@ -93,9 +119,82 @@ export default function ContactPage() {
     }
   }, [isProductEnquiry])
 
+  useEffect(() => {
+    if (!toast) return
+    const timer = window.setTimeout(() => setToast(null), 5000)
+    return () => window.clearTimeout(timer)
+  }, [toast])
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (submitting || submitted) return
+
+    setSubmitting(true)
+    setSubmitError('')
+    setToast(null)
+    const form = e.currentTarget
+    const data = new FormData(form)
+
+    const subjectValue = String(data.get('subject') || '').trim()
+    const typeValue = String(data.get('enquiryType') || subjectValue || 'general').trim()
+    const subject =
+      isProductEnquiry
+        ? enquirySubject
+        : ENQUIRY_TYPE_LABELS[subjectValue] || subjectValue || 'Website enquiry'
+
+    try {
+      const res = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: String(data.get('name') || '').trim(),
+          email: String(data.get('email') || '').trim(),
+          phone: String(data.get('phone') || '').trim(),
+          subject,
+          type: isProductEnquiry ? (isOrderOnDemand ? 'order-on-demand' : 'product') : typeValue,
+          message: String(data.get('message') || '').trim(),
+          productName: productName || undefined,
+          quantity: isProductEnquiry ? enquiryQty : undefined,
+          moq: isProductEnquiry ? productMoq : undefined,
+        }),
+      })
+      const payload = (await res.json().catch(() => null)) as { error?: string } | null
+      if (!res.ok) {
+        throw new Error(payload?.error || `Submit failed (${res.status})`)
+      }
+      setSubmitted(true)
+      form.reset()
+      setToast({
+        type: 'success',
+        text: isOrderOnDemand
+          ? 'Order on Demand submitted successfully. Our team will get back to you shortly.'
+          : 'Enquiry submitted successfully. Our team will get back to you shortly.',
+      })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch (error) {
+      const text = error instanceof Error ? error.message : 'Could not submit enquiry.'
+      setSubmitError(text)
+      setToast({ type: 'error', text })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <>
       <FloatingNavbar activePage="contact" />
+      {toast ? (
+        <div
+          className={`contactToast${toast.type === 'error' ? ' contactToast--error' : ' contactToast--success'}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span>{toast.text}</span>
+          <button type="button" className="contactToastClose" onClick={() => setToast(null)} aria-label="Dismiss">
+            ×
+          </button>
+        </div>
+      ) : null}
       <main className="sitePage contactPage">
         <section className="contactHero">
           <div className="container contactHeroInner">
@@ -152,61 +251,88 @@ export default function ContactPage() {
                   </div>
                 )}
 
-                <form className="contactForm" onSubmit={(e) => e.preventDefault()}>
-                  <div className="contactFormRow">
-                    <div className="formGroup">
-                      <label htmlFor="fullName">Full Name</label>
-                      <input id="fullName" type="text" placeholder="Your full name" required />
-                    </div>
-                    <div className="formGroup">
-                      <label htmlFor="email">Email Address</label>
-                      <input id="email" type="email" placeholder="you@email.com" required />
-                    </div>
+                {submitted ? (
+                  <div className="contactFormSuccess">
+                    <h3>Enquiry submitted</h3>
+                    <p>
+                      Thanks — our team has received your message
+                      {isOrderOnDemand ? ' for Order on Demand' : ''} and will respond shortly.
+                    </p>
+                    <button
+                      type="button"
+                      className="btnSubmit contactFormSubmit"
+                      onClick={() => {
+                        setSubmitted(false)
+                        setToast(null)
+                      }}
+                    >
+                      Send another message
+                    </button>
                   </div>
-                  <div className="contactFormRow contactFormRow--single">
-                    <div className="formGroup">
-                      <label htmlFor="phone">Phone Number</label>
-                      <input id="phone" type="tel" placeholder="+91 98765 43210" />
-                    </div>
-                  </div>
-                  {!isProductEnquiry && (
-                    <div className="formGroup">
-                      <label htmlFor="subject">Subject</label>
-                      <select id="subject" name="subject" defaultValue="general">
-                        <option value="general">General Inquiry</option>
-                        <option value="product">Product Enquiry</option>
-                        <option value="order-on-demand">Order on Demand</option>
-                        <option value="bulk">Bulk / Corporate Order</option>
-                        <option value="order">Order Status</option>
-                        <option value="business">Business & Partnerships</option>
-                      </select>
-                    </div>
-                  )}
-                  {isProductEnquiry && (
-                    <>
-                      <input id="subject" type="hidden" name="subject" value={enquirySubject} />
-                      <input type="hidden" name="enquiryType" value={isOrderOnDemand ? 'order-on-demand' : 'product'} />
+                ) : (
+                <form className={`contactForm${submitting ? ' contactForm--submitting' : ''}`} onSubmit={handleSubmit}>
+                    <div className="contactFormRow">
                       <div className="formGroup">
-                        <label htmlFor="subjectVisible">Subject</label>
-                        <input id="subjectVisible" type="text" value={enquirySubject} readOnly />
+                        <label htmlFor="fullName">Full Name</label>
+                        <input id="fullName" name="name" type="text" placeholder="Your full name" required disabled={submitting} />
                       </div>
-                    </>
-                  )}
-                  <div className="formGroup formGroupFull">
-                    <label htmlFor="message">Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={5}
-                      placeholder="Tell us more about your inquiry..."
-                      defaultValue={enquiryMessage}
-                      required
-                    />
-                  </div>
-                  <button type="submit" className="btnSubmit contactFormSubmit">
-                    {isOrderOnDemand ? 'Submit Order on Demand' : 'Send Enquiry'}
-                  </button>
+                      <div className="formGroup">
+                        <label htmlFor="email">Email Address</label>
+                        <input id="email" name="email" type="email" placeholder="you@email.com" required disabled={submitting} />
+                      </div>
+                    </div>
+                    <div className="contactFormRow contactFormRow--single">
+                      <div className="formGroup">
+                        <label htmlFor="phone">Phone Number</label>
+                        <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" disabled={submitting} />
+                      </div>
+                    </div>
+                    {!isProductEnquiry && (
+                      <div className="formGroup">
+                        <label htmlFor="subject">Subject</label>
+                        <select id="subject" name="subject" defaultValue="general" disabled={submitting}>
+                          <option value="general">General Inquiry</option>
+                          <option value="product">Product Enquiry</option>
+                          <option value="order-on-demand">Order on Demand</option>
+                          <option value="bulk">Bulk / Corporate Order</option>
+                          <option value="order">Order Status</option>
+                          <option value="business">Business & Partnerships</option>
+                        </select>
+                      </div>
+                    )}
+                    {isProductEnquiry && (
+                      <>
+                        <input type="hidden" name="subject" value={enquirySubject} />
+                        <input type="hidden" name="enquiryType" value={isOrderOnDemand ? 'order-on-demand' : 'product'} />
+                        <div className="formGroup">
+                          <label htmlFor="subjectVisible">Subject</label>
+                          <input id="subjectVisible" type="text" value={enquirySubject} readOnly disabled={submitting} />
+                        </div>
+                      </>
+                    )}
+                    <div className="formGroup formGroupFull">
+                      <label htmlFor="message">Message</label>
+                      <textarea
+                        key={enquiryMessage || 'blank'}
+                        id="message"
+                        name="message"
+                        rows={5}
+                        placeholder="Tell us more about your inquiry..."
+                        defaultValue={enquiryMessage}
+                        required
+                        disabled={submitting}
+                      />
+                    </div>
+                    {submitError ? <p className="contactFormError">{submitError}</p> : null}
+                    <button type="submit" className="btnSubmit contactFormSubmit" disabled={submitting || submitted}>
+                      {submitting
+                        ? 'Submitting…'
+                        : isOrderOnDemand
+                          ? 'Submit Order on Demand'
+                          : 'Send Enquiry'}
+                    </button>
                 </form>
+                )}
               </Reveal>
 
               <Reveal className="contactInfoPanel" delay={0.08}>

@@ -20,12 +20,14 @@
         "Antique gold plating",
         "Kundan-style stone setting",
         "Includes matching earrings",
-        "Adjustable choker tie"
+        "Adjustable choker tie",
+        "s"
       ],
       "material": "Brass alloy with gold plating",
       "sku": "RX-NK-001",
       "reviewCount": 412,
-      "inStock": true
+      "inStock": false,
+      "moq": 100
     },
     {
       "id": "jew-002",

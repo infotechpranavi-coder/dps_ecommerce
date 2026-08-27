@@ -6575,6 +6575,113 @@ a {
   grid-column: unset;
 }
 
+.contactFormSuccess {
+  display: grid;
+  gap: 12px;
+  padding: 8px 0 4px;
+}
+
+.contactFormSuccess h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--color-navy);
+}
+
+.contactFormSuccess p {
+  margin: 0;
+  color: rgba(15, 30, 50, 0.72);
+  line-height: 1.5;
+}
+
+.contactFormError {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #b71c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.contactFormFields {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+  display: contents;
+}
+
+.contactFormFields:disabled {
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.contactForm--submitting {
+  opacity: 0.78;
+}
+
+.contactFormSubmit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.contactToast {
+  position: fixed;
+  top: calc(var(--header-height, 72px) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(560px, calc(100vw - 24px));
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 30, 50, 0.22);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  animation: contactToastIn 0.28s ease;
+}
+
+.contactToast--success {
+  background: #1b5e20;
+  color: #fff;
+}
+
+.contactToast--error {
+  background: #b71c1c;
+  color: #fff;
+}
+
+.contactToastClose {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  opacity: 0.85;
+}
+
+.contactToastClose:hover {
+  opacity: 1;
+}
+
+@keyframes contactToastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
 .contactInfoPanel {
   border-radius: 22px;
   overflow: hidden;
@@ -9282,6 +9389,51 @@ a.productsCategoryCard {
   color: #9a3412;
 }
 
+.dashboardFlag--ok {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
+}
+
+.dashboardMuted {
+  font-size: 12px;
+  color: rgba(15, 30, 50, 0.58);
+  margin-top: 2px;
+}
+
+.dashboardEmptyCell {
+  text-align: center;
+  padding: 28px 16px !important;
+  color: rgba(15, 30, 50, 0.55);
+}
+
+.dashboardEnquiryDetail {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 18px;
+}
+
+.dashboardEnquiryDetail p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.dashboardEnquiryMessage {
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(15, 30, 50, 0.04);
+}
+
+.dashboardEnquiryMessage strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.dashboardEnquiryMessage p {
+  white-space: pre-wrap;
+}
+
 .dashboardStockToggle {
   display: inline-flex;
   align-items: center;
@@ -9393,6 +9545,37 @@ a.productsCategoryCard {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.dashboardFeatureEditor {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.dashboardFeatureEditorTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.dashboardFeatureList {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboardFeatureRow,
+.dashboardFeatureAddRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.dashboardFeatureRow input,
+.dashboardFeatureAddRow input {
+  width: 100%;
+  min-width: 0;
 }
 
 .dashboardSubcatChip {

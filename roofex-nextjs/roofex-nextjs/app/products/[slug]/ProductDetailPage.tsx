@@ -21,9 +21,10 @@ export default function ProductDetailPage({ product }: { product: Product }) {
   const [wishlistSlugs, setWishlistSlugs] = useState<string[]>([])
   const isOutOfStock = product.inStock === false
   const ctaLabel = isOutOfStock ? 'Order on Demand' : 'Enquire'
+  const orderQty = Math.max(minQty, quantity)
   const enquireHref = isOutOfStock
-    ? `/contact?product=${encodeURIComponent(product.title)}&qty=${quantity}&type=order-on-demand#contact-form`
-    : `/contact?product=${encodeURIComponent(product.title)}&qty=${quantity}#contact-form`
+    ? `/contact?product=${encodeURIComponent(product.title)}&qty=${orderQty}&moq=${minQty}&type=order-on-demand#contact-form`
+    : `/contact?product=${encodeURIComponent(product.title)}&qty=${orderQty}&moq=${minQty}#contact-form`
 
   const handleEnquire = () => {
     router.push(enquireHref)

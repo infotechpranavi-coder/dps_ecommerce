@@ -6,14 +6,16 @@ import type { HeroBanner, Product } from '@/lib/product-types'
 import { slugify, type CategoryMeta, type StoredCatalog } from '@/lib/catalog-utils'
 import { brand } from '@/lib/brand'
 import { productPath } from '@/lib/product-path'
+import { ENQUIRY_TYPE_LABELS, type Enquiry } from '@/lib/enquiry-types'
 
-type Tab = 'products' | 'categories' | 'banners' | 'marquee'
+type Tab = 'products' | 'categories' | 'banners' | 'marquee' | 'enquiries'
 
 const navItems: { id: Tab; label: string; hint: string }[] = [
   { id: 'products', label: 'Products', hint: 'Manage catalogue items' },
   { id: 'categories', label: 'Categories', hint: 'Collection groups' },
   { id: 'banners', label: 'Hero Banners', hint: 'Homepage hero slides' },
   { id: 'marquee', label: 'Text Slider', hint: 'Homepage ticker after About' },
+  { id: 'enquiries', label: 'Enquiries', hint: 'Contact form submissions' },
 ]
 
 function nextSku(products: Product[]): string {
@@ -216,6 +218,7 @@ const emptyProduct = (): Product => ({
   shortDescription: '',
   description: '',
   features: [],
+  material: '',
   sku: '',
   reviewCount: 0,
   inStock: true,
@@ -265,6 +268,11 @@ export default function DashboardPage() {
   const [imageLabels, setImageLabels] = useState<Record<string, string>>({})
   const [slugLocked, setSlugLocked] = useState(false)
   const [subcategoryDraft, setSubcategoryDraft] = useState('')
+  const [featureDraft, setFeatureDraft] = useState('')
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([])
+  const [enquiriesLoading, setEnquiriesLoading] = useState(false)
+  const [resendConfigured, setResendConfigured] = useState(false)
+  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null)
 
   const loadCatalog = useCallback(async () => {
     setLoading(true)
@@ -289,6 +297,28 @@ export default function DashboardPage() {
     loadCatalog()
   }, [loadCatalog])
 
+  const loadEnquiries = useCallback(async () => {
+    setEnquiriesLoading(true)
+    try {
+      const res = await fetch('/api/enquiries', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Failed to load enquiries')
+      const data = (await res.json()) as { enquiries?: Enquiry[]; resendConfigured?: boolean }
+      setEnquiries(Array.isArray(data.enquiries) ? data.enquiries : [])
+      setResendConfigured(Boolean(data.resendConfigured))
+    } catch {
+      setMessageError(true)
+      setMessage('Could not load enquiries.')
+    } finally {
+      setEnquiriesLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (tab === 'enquiries') {
+      loadEnquiries()
+    }
+  }, [tab, loadEnquiries])
+
   const categoryTitles = useMemo(
     () => catalog?.categories.map((c) => c.title) ?? [],
     [catalog],
@@ -300,7 +330,7 @@ export default function DashboardPage() {
     setMessageError(false)
     try {
       const res = await fetch('/api/catalog', {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(next),
       })
@@ -332,12 +362,19 @@ export default function DashboardPage() {
     setIsNewProduct(true)
     setSlugLocked(false)
     setImageLabels({})
+    setFeatureDraft('')
   }
 
   const openEditProduct = (product: Product) => {
-    setEditingProduct({ ...product, images: [...(product.images ?? [product.img]).filter(Boolean)] })
+    setEditingProduct({
+      ...product,
+      material: product.material ?? '',
+      images: [...(product.images ?? [product.img]).filter(Boolean)],
+      features: [...(product.features ?? [])],
+    })
     setIsNewProduct(false)
     setSlugLocked(true)
+    setFeatureDraft('')
     const labels: Record<string, string> = {}
     if (product.img) labels[product.img] = fileLabel(product.img, 'Main image')
     for (const url of product.images ?? []) {
@@ -440,9 +477,10 @@ export default function DashboardPage() {
       sku,
       moq: Math.max(1, Math.floor(Number(editingProduct.moq) || 1)),
       subcategory: editingProduct.subcategory?.trim() || undefined,
+      material: editingProduct.material?.trim() || undefined,
       img: img || images[0] || '',
       images: images.length ? images : img ? [img] : [],
-      features: editingProduct.features.filter(Boolean),
+      features: editingProduct.features.map((f) => f.trim()).filter(Boolean),
       badge: editingProduct.isBestSeller
         ? editingProduct.badge || 'Best Seller'
         : editingProduct.isNew
@@ -458,6 +496,39 @@ export default function DashboardPage() {
 
     await saveCatalog({ ...catalog, products })
     setEditingProduct(null)
+    setFeatureDraft('')
+  }
+
+  const addFeatureToDraft = () => {
+    if (!editingProduct) return
+    const feature = featureDraft.trim()
+    if (!feature) return
+    const existing = editingProduct.features.map((f) => f.trim().toLowerCase())
+    if (existing.includes(feature.toLowerCase())) {
+      setMessageError(true)
+      setMessage('That feature is already added.')
+      return
+    }
+    setEditingProduct({
+      ...editingProduct,
+      features: [...editingProduct.features, feature],
+    })
+    setFeatureDraft('')
+  }
+
+  const removeFeatureFromDraft = (index: number) => {
+    if (!editingProduct) return
+    setEditingProduct({
+      ...editingProduct,
+      features: editingProduct.features.filter((_, i) => i !== index),
+    })
+  }
+
+  const updateFeatureAt = (index: number, value: string) => {
+    if (!editingProduct) return
+    const features = [...editingProduct.features]
+    features[index] = value
+    setEditingProduct({ ...editingProduct, features })
   }
 
   const deleteProduct = async (id: string) => {
@@ -623,6 +694,110 @@ export default function DashboardPage() {
   }
 
   const renderPanel = () => {
+    if (tab === 'enquiries') {
+      return (
+        <section className="dashboardPanel">
+          <div className="dashboardPanelHead">
+            <div>
+              <h2>Enquiries</h2>
+              <p className="dashboardPanelDesc">
+                {enquiriesLoading
+                  ? 'Loading submissions…'
+                  : `${enquiries.length} contact form submission${enquiries.length === 1 ? '' : 's'}`}
+              </p>
+            </div>
+            <button type="button" className="btnOrange" onClick={loadEnquiries} disabled={enquiriesLoading}>
+              {enquiriesLoading ? 'Refreshing…' : 'Refresh'}
+            </button>
+          </div>
+          <p className="dashboardStorageNote">
+            {resendConfigured
+              ? 'Resend email alerts are enabled for new submissions.'
+              : 'Resend not configured yet — submissions are still saved here. Add RESEND_API_KEY later to email alerts.'}
+          </p>
+          <div className="dashboardTableWrap">
+            <table className="dashboardTable">
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>Type</th>
+                  <th>From</th>
+                  <th>Subject</th>
+                  <th>Email</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {enquiries.length === 0 && !enquiriesLoading ? (
+                  <tr>
+                    <td colSpan={6} className="dashboardEmptyCell">
+                      No enquiries yet. Submit the contact form to see entries here.
+                    </td>
+                  </tr>
+                ) : (
+                  enquiries.map((item) => (
+                    <tr key={item.id}>
+                      <td>
+                        <time dateTime={item.createdAt}>
+                          {new Date(item.createdAt).toLocaleString('en-IN', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </time>
+                      </td>
+                      <td>
+                        <span className="dashboardFlag">
+                          {ENQUIRY_TYPE_LABELS[item.type] || item.type}
+                        </span>
+                      </td>
+                      <td>
+                        <strong>{item.name}</strong>
+                        <div className="dashboardMuted">{item.email}</div>
+                        {item.phone ? <div className="dashboardMuted">{item.phone}</div> : null}
+                      </td>
+                      <td>
+                        <div>{item.subject}</div>
+                        {item.productName ? (
+                          <div className="dashboardMuted">
+                            {item.productName}
+                            {item.quantity != null ? ` · Qty ${item.quantity}` : ''}
+                            {item.moq != null ? ` · MOQ ${item.moq}` : ''}
+                          </div>
+                        ) : null}
+                      </td>
+                      <td>
+                        <span
+                          className={`dashboardFlag${
+                            item.emailStatus === 'sent'
+                              ? ' dashboardFlag--ok'
+                              : item.emailStatus === 'failed'
+                                ? ' dashboardFlag--oos'
+                                : ''
+                          }`}
+                        >
+                          {item.emailStatus}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="dashboardRowActions">
+                          <button type="button" onClick={() => setSelectedEnquiry(item)}>
+                            View
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )
+    }
+
     if (loading) return <p className="dashboardLoading">Loading catalog…</p>
     if (!catalog) return <p className="dashboardLoading">Could not load catalog.</p>
 
@@ -1014,40 +1189,102 @@ export default function DashboardPage() {
                     required
                   />
                 </label>
+                <div className="dashboardFeatureEditor">
+                  <span className="dashboardFeatureEditorTitle">Features</span>
+                  <p className="dashboardFieldHint">Add each feature separately — shown as chips on the product page.</p>
+                  <div className="dashboardFeatureList">
+                    {editingProduct.features.length === 0 ? (
+                      <span className="dashboardFieldHint">No features added yet.</span>
+                    ) : (
+                      editingProduct.features.map((feature, index) => (
+                        <div key={`feature-${index}`} className="dashboardFeatureRow">
+                          <input
+                            value={feature}
+                            onChange={(e) => updateFeatureAt(index, e.target.value)}
+                            placeholder={`Feature ${index + 1}`}
+                            aria-label={`Feature ${index + 1}`}
+                          />
+                          <button
+                            type="button"
+                            className="danger"
+                            onClick={() => removeFeatureFromDraft(index)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div className="dashboardFeatureAddRow">
+                    <input
+                      value={featureDraft}
+                      onChange={(e) => setFeatureDraft(e.target.value)}
+                      placeholder="e.g. Antique gold plating"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          addFeatureToDraft()
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="btnOrange dashboardImageUrlBtn"
+                      onClick={addFeatureToDraft}
+                      disabled={!featureDraft.trim()}
+                    >
+                      Add feature
+                    </button>
+                  </div>
+                </div>
+
                 <label>
-                  Features (comma separated)
+                  Material
                   <input
-                    value={editingProduct.features.join(', ')}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        features: e.target.value
-                          .split(',')
-                          .map((s) => s.trim())
-                          .filter(Boolean),
-                      })
-                    }
+                    value={editingProduct.material ?? ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, material: e.target.value })}
+                    placeholder="e.g. Brass alloy with gold plating"
                   />
+                  <span className="dashboardFieldHint">Shown under Specifications on the product page</span>
+                </label>
+
+                <label>
+                  SKU
+                  <input
+                    value={editingProduct.sku}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, sku: e.target.value })}
+                    readOnly={isNewProduct}
+                    title={isNewProduct ? 'Auto-assigned from product count' : undefined}
+                  />
+                  {isNewProduct ? (
+                    <span className="dashboardFieldHint">Auto from product list count</span>
+                  ) : null}
                 </label>
                 <div className="dashboardFormRow">
-                  <label>
-                    SKU
-                    <input
-                      value={editingProduct.sku}
-                      onChange={(e) => setEditingProduct({ ...editingProduct, sku: e.target.value })}
-                      readOnly={isNewProduct}
-                      title={isNewProduct ? 'Auto-assigned from product count' : undefined}
-                    />
-                    {isNewProduct ? (
-                      <span className="dashboardFieldHint">Auto from product list count</span>
-                    ) : null}
-                  </label>
                   <label>
                     Rating
                     <input
                       value={editingProduct.rating}
                       onChange={(e) => setEditingProduct({ ...editingProduct, rating: e.target.value })}
+                      placeholder="4.9"
                     />
+                  </label>
+                  <label>
+                    Number of reviews
+                    <input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={editingProduct.reviewCount ?? 0}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          reviewCount: Math.max(0, Math.floor(Number(e.target.value) || 0)),
+                        })
+                      }
+                      placeholder="412"
+                    />
+                    <span className="dashboardFieldHint">Shown as “4.9 · 412 reviews” on the product page</span>
                   </label>
                 </div>
 
@@ -1217,6 +1454,43 @@ export default function DashboardPage() {
                   <button type="submit" className="btnOrange" disabled={saving}>{saving ? 'Saving…' : 'Save Banner'}</button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+        {selectedEnquiry && (
+          <div className="dashboardModalBackdrop" role="presentation" onClick={() => setSelectedEnquiry(null)}>
+            <div className="dashboardModal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+              <h2>Enquiry details</h2>
+              <div className="dashboardEnquiryDetail">
+                <p><strong>When:</strong> {new Date(selectedEnquiry.createdAt).toLocaleString('en-IN')}</p>
+                <p><strong>Type:</strong> {ENQUIRY_TYPE_LABELS[selectedEnquiry.type] || selectedEnquiry.type}</p>
+                <p><strong>Subject:</strong> {selectedEnquiry.subject}</p>
+                <p><strong>Name:</strong> {selectedEnquiry.name}</p>
+                <p><strong>Email:</strong> <a href={`mailto:${selectedEnquiry.email}`}>{selectedEnquiry.email}</a></p>
+                {selectedEnquiry.phone ? (
+                  <p><strong>Phone:</strong> <a href={`tel:${selectedEnquiry.phone}`}>{selectedEnquiry.phone}</a></p>
+                ) : null}
+                {selectedEnquiry.productName ? (
+                  <p>
+                    <strong>Product:</strong> {selectedEnquiry.productName}
+                    {selectedEnquiry.quantity != null ? ` · Qty ${selectedEnquiry.quantity}` : ''}
+                    {selectedEnquiry.moq != null ? ` · MOQ ${selectedEnquiry.moq}` : ''}
+                  </p>
+                ) : null}
+                <p>
+                  <strong>Email alert:</strong> {selectedEnquiry.emailStatus}
+                  {selectedEnquiry.emailError ? ` — ${selectedEnquiry.emailError}` : ''}
+                </p>
+                <div className="dashboardEnquiryMessage">
+                  <strong>Message</strong>
+                  <p>{selectedEnquiry.message}</p>
+                </div>
+              </div>
+              <div className="dashboardModalActions">
+                <button type="button" className="btn btnDark" onClick={() => setSelectedEnquiry(null)}>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "enq_mtbepgn7_5ner6j",
+    "createdAt": "2026-08-27T10:55:28.387Z",
+    "name": "s",
+    "email": "adcommerce2510@gmail.com",
+    "phone": "912365456",
+    "type": "order-on-demand",
+    "subject": "Order on Demand: Kundan Choker Necklace Set",
+    "message": "Hello, I would like to place an Order on Demand for Kundan Choker Necklace Set (quantity: 1, MOQ: 1). Please confirm lead time, availability, and pricing.",
+    "productName": "Kundan Choker Necklace Set",
+    "quantity": 1,
+    "moq": 1,
+    "emailStatus": "skipped",
+    "emailError": "RESEND_API_KEY not configured"
+  },
+  {
+    "id": "enq_mtbec0mm_vfx65r",
+    "createdAt": "2026-08-27T10:45:01.102Z",
+    "name": "Test User",
+    "email": "test@example.com",
+    "phone": "9999999999",
+    "type": "general",
+    "subject": "General Inquiry",
+    "message": "Hello from automated test",
+    "emailStatus": "skipped",
+    "emailError": "RESEND_API_KEY not configured"
+  }
+]

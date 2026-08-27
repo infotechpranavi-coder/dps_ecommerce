@@ -35,20 +35,26 @@ async function loadCatalog(): Promise<StoredCatalog> {
 
 async function saveCatalog(data: StoredCatalog): Promise<StoredCatalog> {
   const payload = normalizeCatalog({ ...data, version: CATALOG_VERSION })
+  const mode = getCatalogStorageMode()
 
-  // Always persist to local file first so dashboard saves stay reliable.
-  writeStoredCatalog(payload)
+  // Local/dev: keep a file backup. On Vercel the FS is read-only, so this may no-op.
+  try {
+    writeStoredCatalog(payload)
+  } catch (error) {
+    console.error('[api/catalog] File catalog write skipped:', error)
+    if (mode !== 'mongodb') {
+      throw error
+    }
+  }
 
-  if (getCatalogStorageMode() === 'mongodb') {
-    // Don't block the dashboard on a slow/unreachable Mongo cluster.
-    void Promise.race([
+  if (mode === 'mongodb') {
+    // Production source of truth — must succeed for dashboard saves on Vercel.
+    await Promise.race([
       writeCatalogToDb(payload),
       new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('MongoDB write timed out')), 8000)
+        setTimeout(() => reject(new Error('MongoDB write timed out')), 12000)
       }),
-    ]).catch((error) => {
-      console.error('[api/catalog] MongoDB write failed — file save kept:', error)
-    })
+    ])
   }
 
   return payload
@@ -85,7 +91,7 @@ export async function GET() {
   }
 }
 
-export async function PUT(request: Request) {
+async function handleSave(request: Request) {
   try {
     const raw = await request.text()
     if (raw.length > MAX_CATALOG_JSON_BYTES) {
@@ -112,7 +118,16 @@ export async function PUT(request: Request) {
     return NextResponse.json({ ok: true })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to save catalog'
-    console.error('[api/catalog PUT]', error)
+    console.error('[api/catalog save]', error)
     return NextResponse.json({ error: message }, { status: 500 })
   }
+}
+
+/** Prefer POST — some hosts/CDNs return 405 for PUT. */
+export async function POST(request: Request) {
+  return handleSave(request)
+}
+
+export async function PUT(request: Request) {
+  return handleSave(request)
 }
