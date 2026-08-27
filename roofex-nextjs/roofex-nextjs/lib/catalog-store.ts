@@ -26,15 +26,16 @@ function getSeedCatalog(): StoredCatalog {
 }
 
 function needsReseed(data: StoredCatalog): boolean {
+  // Only reseed when the catalog is empty or from an older schema — never
+  // because banners/marquee were intentionally cleared.
   return (
     (data.version ?? 0) < CATALOG_VERSION
     || !data.products?.length
     || !data.categories?.length
-    || !data.banners?.length
   )
 }
 
-function normalizeCatalog(data: StoredCatalog): StoredCatalog {
+export function normalizeCatalog(data: StoredCatalog): StoredCatalog {
   const seed = getSeedCatalog()
   const products = Array.isArray(data.products) ? data.products : seed.products
   const categories = (Array.isArray(data.categories) ? data.categories : seed.categories).map((cat) => ({
@@ -48,15 +49,16 @@ function normalizeCatalog(data: StoredCatalog): StoredCatalog {
           .filter((s) => s.title)
       : [],
   }))
+  const banners = Array.isArray(data.banners) ? data.banners : seed.banners
+  const marqueeTerms = Array.isArray(data.marqueeTerms)
+    ? data.marqueeTerms.map((term) => String(term).trim()).filter(Boolean)
+    : seed.marqueeTerms
   return {
     version: data.version ?? CATALOG_VERSION,
     products: products.map(normalizeProduct),
     categories,
-    banners: data.banners?.length ? data.banners : seed.banners,
-    marqueeTerms:
-      Array.isArray(data.marqueeTerms) && data.marqueeTerms.length
-        ? data.marqueeTerms.map((term) => String(term).trim()).filter(Boolean)
-        : seed.marqueeTerms,
+    banners: banners.length ? banners : seed.banners,
+    marqueeTerms: marqueeTerms.length ? marqueeTerms : seed.marqueeTerms,
   }
 }
 
@@ -92,8 +94,9 @@ export function readStoredCatalog(): StoredCatalog {
   }
 }
 
-export function writeStoredCatalog(data: StoredCatalog) {
+export function writeStoredCatalog(data: StoredCatalog): StoredCatalog {
   fs.mkdirSync(path.dirname(CATALOG_PATH), { recursive: true })
   const payload = normalizeCatalog({ ...data, version: CATALOG_VERSION })
   fs.writeFileSync(CATALOG_PATH, JSON.stringify(payload, null, 2), 'utf-8')
+  return payload
 }

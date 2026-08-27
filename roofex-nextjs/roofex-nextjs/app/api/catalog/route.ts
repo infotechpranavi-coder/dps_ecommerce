@@ -5,8 +5,16 @@ import {
   writeCatalogToDb,
 } from '@/lib/db/catalog-repository'
 import { isCloudinaryConfigured } from '@/lib/cloudinary'
-import { readStoredCatalog, writeStoredCatalog, type StoredCatalog } from '@/lib/catalog-store'
+import {
+  normalizeCatalog,
+  readStoredCatalog,
+  writeStoredCatalog,
+  type StoredCatalog,
+} from '@/lib/catalog-store'
 import { CATALOG_VERSION, getDemoCatalog } from '@/lib/demo-catalog'
+
+/** ~12MB — leaves headroom under MongoDB's 16MB document limit. */
+const MAX_CATALOG_JSON_BYTES = 12 * 1024 * 1024
 
 async function loadCatalog(): Promise<StoredCatalog> {
   if (getCatalogStorageMode() === 'mongodb') {
@@ -25,8 +33,8 @@ async function loadCatalog(): Promise<StoredCatalog> {
   return readStoredCatalog()
 }
 
-async function saveCatalog(data: StoredCatalog): Promise<void> {
-  const payload = { ...data, version: CATALOG_VERSION }
+async function saveCatalog(data: StoredCatalog): Promise<StoredCatalog> {
+  const payload = normalizeCatalog({ ...data, version: CATALOG_VERSION })
 
   // Always persist to local file first so dashboard saves stay reliable.
   writeStoredCatalog(payload)
@@ -42,6 +50,8 @@ async function saveCatalog(data: StoredCatalog): Promise<void> {
       console.error('[api/catalog] MongoDB write failed — file save kept:', error)
     })
   }
+
+  return payload
 }
 
 export async function GET() {
@@ -77,13 +87,25 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    const body = (await request.json()) as StoredCatalog
+    const raw = await request.text()
+    if (raw.length > MAX_CATALOG_JSON_BYTES) {
+      return NextResponse.json(
+        {
+          error:
+            'Catalog is too large to save (likely embedded image data). Re-upload images via Cloudinary/URL instead of huge local data URLs.',
+        },
+        { status: 413 },
+      )
+    }
+
+    const body = JSON.parse(raw) as StoredCatalog
     if (!body?.products || !body?.categories) {
       return NextResponse.json({ error: 'Invalid catalog payload' }, { status: 400 })
     }
+
     const payload: StoredCatalog = {
       ...body,
-      banners: body.banners ?? [],
+      banners: Array.isArray(body.banners) ? body.banners : [],
       marqueeTerms: Array.isArray(body.marqueeTerms) ? body.marqueeTerms : [],
     }
     await saveCatalog(payload)
@@ -94,4 +116,3 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
-

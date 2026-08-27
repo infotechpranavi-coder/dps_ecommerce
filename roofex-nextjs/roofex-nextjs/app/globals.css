@@ -9189,6 +9189,11 @@ a.productsCategoryCard {
   margin-bottom: 20px;
 }
 
+.dashboardMessage--error {
+  background: #fdecea;
+  color: #b71c1c;
+}
+
 .dashboardLoading {
   color: var(--color-text-muted);
   padding: 40px 0;

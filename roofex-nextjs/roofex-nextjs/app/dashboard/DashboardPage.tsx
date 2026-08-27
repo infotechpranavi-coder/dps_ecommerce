@@ -60,17 +60,23 @@ async function uploadImageFile(file: File, kind: UploadKind = 'products'): Promi
   const form = new FormData()
   form.append('file', file)
   form.append('kind', kind)
-  try {
-    const res = await fetch('/api/upload', { method: 'POST', body: form })
-    if (res.ok) {
-      const data = (await res.json()) as { url?: string; secure_url?: string }
-      const url = data.url || data.secure_url
-      if (url) return url
-    }
-  } catch {
-    // fall through to local preview
+  const res = await fetch('/api/upload', { method: 'POST', body: form })
+  if (res.ok) {
+    const data = (await res.json()) as { url?: string; secure_url?: string }
+    const url = data.url || data.secure_url
+    if (url) return url
   }
-  return readFileAsDataUrl(file)
+
+  // Cloudinary missing / failed — only keep tiny files as data URLs so catalog saves stay under Mongo limits.
+  if (file.size <= 400_000) {
+    return readFileAsDataUrl(file)
+  }
+
+  const data = (await res.json().catch(() => null)) as { error?: string } | null
+  throw new Error(
+    data?.error
+      || 'Image upload failed. Check Cloudinary credentials, or use a smaller image / image URL.',
+  )
 }
 
 function DashboardImageField({
@@ -129,6 +135,8 @@ function DashboardImageField({
         const url = await uploadImageFile(files[0], kind)
         onChange(url, files[0].name)
       }
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Image upload failed.')
     } finally {
       setUploading(false)
     }
@@ -243,6 +251,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+  const [messageError, setMessageError] = useState(false)
   const [storageMode, setStorageMode] = useState<'mongodb' | 'file'>('file')
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [editingCategory, setEditingCategory] = useState<CategoryMeta | null>(null)
@@ -288,18 +297,28 @@ export default function DashboardPage() {
   const saveCatalog = async (next: StoredCatalog) => {
     setSaving(true)
     setMessage('')
+    setMessageError(false)
     try {
       const res = await fetch('/api/catalog', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(next),
       })
-      if (!res.ok) throw new Error('Save failed')
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null
+        throw new Error(data?.error || `Save failed (${res.status})`)
+      }
       setCatalog(next)
+      setMessageError(false)
       setMessage('Saved successfully.')
       window.dispatchEvent(new CustomEvent('catalog-updated'))
-    } catch {
-      setMessage('Could not save changes. Please try again.')
+    } catch (error) {
+      setMessageError(true)
+      setMessage(
+        error instanceof Error && error.message
+          ? error.message
+          : 'Could not save changes. Please try again.',
+      )
     } finally {
       setSaving(false)
     }
@@ -399,11 +418,13 @@ export default function DashboardPage() {
 
     const slug = editingProduct.slug.trim() || slugify(title)
     if (!slug) {
+      setMessageError(true)
       setMessage('Add a title so the product URL/slug can be created.')
       return
     }
     const img = editingProduct.img.trim()
     if (!img) {
+      setMessageError(true)
       setMessage('Please add a main product image.')
       return
     }
@@ -470,6 +491,7 @@ export default function DashboardPage() {
     const slug = slugify(title)
     const existing = editingCategory.subcategories ?? []
     if (existing.some((s) => s.slug === slug || s.title.toLowerCase() === title.toLowerCase())) {
+      setMessageError(true)
       setMessage('That sub-category already exists.')
       return
     }
@@ -493,6 +515,7 @@ export default function DashboardPage() {
     const title = editingCategory.title.trim()
     if (!title) return
     if (!editingCategory.img.trim()) {
+      setMessageError(true)
       setMessage('Please add a category image (local file or URL).')
       return
     }
@@ -539,6 +562,7 @@ export default function DashboardPage() {
     if (!catalog || !editingBanner) return
     const image = editingBanner.image.trim()
     if (!image) {
+      setMessageError(true)
       setMessage('Please add a banner image (local file or URL).')
       return
     }
@@ -840,7 +864,11 @@ export default function DashboardPage() {
                 : 'Demo mode: catalogue stored locally. Share MongoDB & Cloudinary credentials to connect live storage.'}
             </p>
 
-            {message && <p className="dashboardMessage">{message}</p>}
+            {message && (
+              <p className={`dashboardMessage${messageError ? ' dashboardMessage--error' : ''}`}>
+                {message}
+              </p>
+            )}
             {renderPanel()}
           </div>
         </div>
