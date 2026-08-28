@@ -3975,6 +3975,33 @@ a {
   margin: 0;
 }
 
+.footerPoweredBy {
+  display: inline-block;
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.footerPoweredBy a {
+  color: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.footerPoweredBy a:hover {
+  color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+  .footerPoweredBy {
+    display: block;
+    margin: 6px 0 0;
+    padding: 0;
+    border-left: 0;
+  }
+}
+
 .footerBottomLinks {
   display: flex;
   flex-wrap: wrap;

@@ -129,7 +129,15 @@ export function Footer() {
         </div>
 
         <div className="footerBottom">
-          <p>{brand.copyright}</p>
+          <p>
+            {brand.copyright}
+            <span className="footerPoweredBy">
+              Powered by{' '}
+              <a href="https://pranaviinfotech.com/" target="_blank" rel="noopener noreferrer">
+                Pranavi Infotech
+              </a>
+            </span>
+          </p>
           <div className="footerBottomLinks">
             <Link href="/contact">Support</Link>
             <Link href="/faq">FAQ</Link>
